@@ -1,22 +1,12 @@
 // =============================================================================
-// FILE: src/persistence/subscription_store.cpp (continued)
+// FILE: src/persistence/subscription_store.cpp
 // =============================================================================
 #include "persistence/subscription_store.h"
 #include "persistence/mongo_client.h"
 #include "common/logger.h"
+#include "MongoPool.h"
 
-#include <mongocxx/client.hpp>
-#include <mongocxx/collection.hpp>
-#include <mongocxx/exception/exception.hpp>
-#include <mongocxx/options/find.hpp>
-#include <mongocxx/options/update.hpp>
-#include <bsoncxx/builder/basic/document.hpp>
-#include <bsoncxx/builder/basic/kvp.hpp>
-#include <bsoncxx/json.hpp>
-#include <bsoncxx/types.hpp>
-
-using bsoncxx::builder::basic::kvp;
-using bsoncxx::builder::basic::make_document;
+#include <mongoc/mongoc.h>
 
 namespace sip_processor {
 
@@ -68,143 +58,210 @@ Result SubscriptionStore::save_immediately(const SubscriptionRecord& record) {
     if (!enabled_ || !mongo_ || !mongo_->is_connected()) return Result::kOk;
 
     ScopedTimer timer;
-    try {
-        auto client = mongo_->acquire();
-        if (!client.valid()) return Result::kPersistenceError;
 
-        auto coll = client.collection(config_.mongo_collection_subs);
+    auto now_ms = static_cast<int32_t>(
+        std::chrono::duration_cast<Millisecs>(
+            std::chrono::system_clock::now().time_since_epoch()).count() / 1000);
 
-        auto filter = make_document(kvp("dialog_id", record.dialog_id));
+    auto expires_ms = record.expires_at != TimePoint{}
+        ? static_cast<int32_t>(
+            std::chrono::duration_cast<Millisecs>(
+                record.expires_at.time_since_epoch()).count() / 1000)
+        : 0;
 
-        auto now_ms = std::chrono::duration_cast<Millisecs>(
-            std::chrono::system_clock::now().time_since_epoch()).count();
+    // Build the filter: { "dialog_id": "<value>" }
+    bson_t *filter = bson_new();
+    BSON_APPEND_UTF8(filter, "dialog_id", record.dialog_id.c_str());
 
-        auto expires_ms = record.expires_at != TimePoint{}
-            ? std::chrono::duration_cast<Millisecs>(
-                record.expires_at.time_since_epoch()).count()
-            : 0LL;
+    // Build the $set update document
+    bson_t *update = bson_new();
+    bson_t set_child;
+    BSON_APPEND_DOCUMENT_BEGIN(update, "$set", &set_child);
 
-        auto doc = make_document(
-            kvp("$set", make_document(
-                kvp("dialog_id",           record.dialog_id),
-                kvp("tenant_id",           record.tenant_id),
-                kvp("type",                subscription_type_to_string(record.type)),
-                kvp("lifecycle",           lifecycle_to_string(record.lifecycle)),
-                kvp("cseq",               static_cast<int32_t>(record.cseq)),
-                kvp("blf_monitored_uri",   record.blf_monitored_uri),
-                kvp("blf_last_state",      record.blf_last_state),
-                kvp("blf_last_direction",  record.blf_last_direction),
-                kvp("blf_presence_call_id", record.blf_presence_call_id),
-                kvp("blf_last_notify_body", record.blf_last_notify_body),
-                kvp("blf_notify_version",  static_cast<int32_t>(record.blf_notify_version)),
-                kvp("mwi_new_messages",    record.mwi_new_messages),
-                kvp("mwi_old_messages",    record.mwi_old_messages),
-                kvp("mwi_account_uri",     record.mwi_account_uri),
-                kvp("mwi_last_notify_body", record.mwi_last_notify_body),
-                kvp("from_uri",            record.from_uri),
-                kvp("from_tag",            record.from_tag),
-                kvp("to_uri",              record.to_uri),
-                kvp("to_tag",              record.to_tag),
-                kvp("call_id",             record.call_id),
-                kvp("contact_uri",         record.contact_uri),
-                kvp("updated_at",          bsoncxx::types::b_int64{now_ms}),
-                kvp("expires_at",          bsoncxx::types::b_int64{expires_ms}),
-                kvp("service_id",          config_.service_id)
-            ))
-        );
+    BSON_APPEND_UTF8(&set_child, "dialog_id",            record.dialog_id.c_str());
+    BSON_APPEND_UTF8(&set_child, "tenant_id",            record.tenant_id.c_str());
+    BSON_APPEND_UTF8(&set_child, "type",                 subscription_type_to_string(record.type));
+    BSON_APPEND_UTF8(&set_child, "lifecycle",            lifecycle_to_string(record.lifecycle));
+    BSON_APPEND_INT32(&set_child, "cseq",                static_cast<int32_t>(record.cseq));
+    BSON_APPEND_UTF8(&set_child, "blf_monitored_uri",    record.blf_monitored_uri.c_str());
+    BSON_APPEND_UTF8(&set_child, "blf_last_state",       record.blf_last_state.c_str());
+    BSON_APPEND_UTF8(&set_child, "blf_last_direction",   record.blf_last_direction.c_str());
+    BSON_APPEND_UTF8(&set_child, "blf_presence_call_id", record.blf_presence_call_id.c_str());
+    BSON_APPEND_UTF8(&set_child, "blf_last_notify_body", record.blf_last_notify_body.c_str());
+    BSON_APPEND_INT32(&set_child, "blf_notify_version",  static_cast<int32_t>(record.blf_notify_version));
+    BSON_APPEND_INT32(&set_child, "mwi_new_messages",    record.mwi_new_messages);
+    BSON_APPEND_INT32(&set_child, "mwi_old_messages",    record.mwi_old_messages);
+    BSON_APPEND_UTF8(&set_child, "mwi_account_uri",      record.mwi_account_uri.c_str());
+    BSON_APPEND_UTF8(&set_child, "mwi_last_notify_body", record.mwi_last_notify_body.c_str());
+    BSON_APPEND_UTF8(&set_child, "from_uri",             record.from_uri.c_str());
+    BSON_APPEND_UTF8(&set_child, "from_tag",             record.from_tag.c_str());
+    BSON_APPEND_UTF8(&set_child, "to_uri",               record.to_uri.c_str());
+    BSON_APPEND_UTF8(&set_child, "to_tag",               record.to_tag.c_str());
+    BSON_APPEND_UTF8(&set_child, "call_id",              record.call_id.c_str());
+    BSON_APPEND_UTF8(&set_child, "contact_uri",          record.contact_uri.c_str());
+    BSON_APPEND_INT32(&set_child, "updated_at",          now_ms);
+    BSON_APPEND_INT32(&set_child, "expires_at",          expires_ms);
+    BSON_APPEND_UTF8(&set_child, "service_id",           config_.service_id.c_str());
 
-        mongocxx::options::update opts;
-        opts.upsert(true);
-        coll.update_one(filter.view(), doc.view(), opts);
+    bson_append_document_end(update, &set_child);
+
+    // MongoPool::Execute with MONGO_UPDATE does update_many(filter, update).
+    // For upsert behavior, we first try an update; if no match, do an insert.
+    // Since MongoPool wraps mongoc_collection_update_many without upsert option,
+    // we implement upsert as: try update, if no docs matched, insert the full doc.
+
+    // First, check if the document exists
+    MongoPool count_pool;
+    int count_ok = count_pool.Execute(filter, nullptr, MONGO_FIND_COUNT,
+                                      __FILE__, __LINE__, __func__,
+                                      config_.mongo_database.c_str(),
+                                      config_.mongo_collection_subs.c_str());
+
+    bool exists = (count_ok && count_pool.getDcount() > 0);
+
+    if (exists) {
+        // Update existing document
+        // Need a fresh filter since MongoPool::Clear destroys the bson passed to it
+        bson_t *filter2 = bson_new();
+        BSON_APPEND_UTF8(filter2, "dialog_id", record.dialog_id.c_str());
+
+        MongoPool update_pool;
+        int ok = update_pool.Execute(filter2, update, MONGO_UPDATE,
+                                     __FILE__, __LINE__, __func__,
+                                     config_.mongo_database.c_str(),
+                                     config_.mongo_collection_subs.c_str());
+        if (!ok) {
+            stats_.errors.fetch_add(1, std::memory_order_relaxed);
+            LOG_ERROR("SubStore: update failed for %s", record.dialog_id.c_str());
+            bson_destroy(filter);
+            return Result::kPersistenceError;
+        }
+    } else {
+        // Insert new document (flatten the $set fields into a top-level doc)
+        bson_t *insert_doc = bson_new();
+        BSON_APPEND_UTF8(insert_doc, "dialog_id",            record.dialog_id.c_str());
+        BSON_APPEND_UTF8(insert_doc, "tenant_id",            record.tenant_id.c_str());
+        BSON_APPEND_UTF8(insert_doc, "type",                 subscription_type_to_string(record.type));
+        BSON_APPEND_UTF8(insert_doc, "lifecycle",            lifecycle_to_string(record.lifecycle));
+        BSON_APPEND_INT32(insert_doc, "cseq",                static_cast<int32_t>(record.cseq));
+        BSON_APPEND_UTF8(insert_doc, "blf_monitored_uri",    record.blf_monitored_uri.c_str());
+        BSON_APPEND_UTF8(insert_doc, "blf_last_state",       record.blf_last_state.c_str());
+        BSON_APPEND_UTF8(insert_doc, "blf_last_direction",   record.blf_last_direction.c_str());
+        BSON_APPEND_UTF8(insert_doc, "blf_presence_call_id", record.blf_presence_call_id.c_str());
+        BSON_APPEND_UTF8(insert_doc, "blf_last_notify_body", record.blf_last_notify_body.c_str());
+        BSON_APPEND_INT32(insert_doc, "blf_notify_version",  static_cast<int32_t>(record.blf_notify_version));
+        BSON_APPEND_INT32(insert_doc, "mwi_new_messages",    record.mwi_new_messages);
+        BSON_APPEND_INT32(insert_doc, "mwi_old_messages",    record.mwi_old_messages);
+        BSON_APPEND_UTF8(insert_doc, "mwi_account_uri",      record.mwi_account_uri.c_str());
+        BSON_APPEND_UTF8(insert_doc, "mwi_last_notify_body", record.mwi_last_notify_body.c_str());
+        BSON_APPEND_UTF8(insert_doc, "from_uri",             record.from_uri.c_str());
+        BSON_APPEND_UTF8(insert_doc, "from_tag",             record.from_tag.c_str());
+        BSON_APPEND_UTF8(insert_doc, "to_uri",               record.to_uri.c_str());
+        BSON_APPEND_UTF8(insert_doc, "to_tag",               record.to_tag.c_str());
+        BSON_APPEND_UTF8(insert_doc, "call_id",              record.call_id.c_str());
+        BSON_APPEND_UTF8(insert_doc, "contact_uri",          record.contact_uri.c_str());
+        BSON_APPEND_INT32(insert_doc, "updated_at",          now_ms);
+        BSON_APPEND_INT32(insert_doc, "expires_at",          expires_ms);
+        BSON_APPEND_UTF8(insert_doc, "service_id",           config_.service_id.c_str());
+
+        MongoPool insert_pool;
+        int ok = insert_pool.Execute(insert_doc, nullptr, MONGO_INSERT,
+                                     __FILE__, __LINE__, __func__,
+                                     config_.mongo_database.c_str(),
+                                     config_.mongo_collection_subs.c_str());
+        // filter and update are owned by count_pool / not needed for insert path
+        bson_destroy(filter);
+        bson_destroy(update);
+
+        if (!ok) {
+            stats_.errors.fetch_add(1, std::memory_order_relaxed);
+            LOG_ERROR("SubStore: insert failed for %s", record.dialog_id.c_str());
+            return Result::kPersistenceError;
+        }
 
         stats_.upserts.fetch_add(1, std::memory_order_relaxed);
+        mongo_->mutable_stats().operations.fetch_add(1, std::memory_order_relaxed);
         return Result::kOk;
-
-    } catch (const mongocxx::exception& e) {
-        stats_.errors.fetch_add(1, std::memory_order_relaxed);
-        LOG_ERROR("SubStore: save failed for %s: %s", record.dialog_id.c_str(), e.what());
-        return Result::kPersistenceError;
     }
+
+    // Update path cleanup — filter was consumed by count_pool, update by update_pool
+    stats_.upserts.fetch_add(1, std::memory_order_relaxed);
+    mongo_->mutable_stats().operations.fetch_add(1, std::memory_order_relaxed);
+    return Result::kOk;
 }
 
 Result SubscriptionStore::delete_immediately(const std::string& dialog_id) {
     if (!enabled_ || !mongo_ || !mongo_->is_connected()) return Result::kOk;
 
-    try {
-        auto client = mongo_->acquire();
-        if (!client.valid()) return Result::kPersistenceError;
-        auto coll = client.collection(config_.mongo_collection_subs);
-        coll.delete_one(make_document(kvp("dialog_id", dialog_id)));
-        stats_.deletes.fetch_add(1, std::memory_order_relaxed);
-        return Result::kOk;
-    } catch (const mongocxx::exception& e) {
+    bson_t *filter = bson_new();
+    BSON_APPEND_UTF8(filter, "dialog_id", dialog_id.c_str());
+
+    MongoPool pool;
+    int ok = pool.Execute(filter, nullptr, MONGO_DELETE,
+                          __FILE__, __LINE__, __func__,
+                          config_.mongo_database.c_str(),
+                          config_.mongo_collection_subs.c_str());
+    if (!ok) {
         stats_.errors.fetch_add(1, std::memory_order_relaxed);
-        LOG_ERROR("SubStore: delete failed for %s: %s", dialog_id.c_str(), e.what());
+        LOG_ERROR("SubStore: delete failed for %s", dialog_id.c_str());
         return Result::kPersistenceError;
     }
+
+    stats_.deletes.fetch_add(1, std::memory_order_relaxed);
+    mongo_->mutable_stats().operations.fetch_add(1, std::memory_order_relaxed);
+    return Result::kOk;
 }
 
 Result SubscriptionStore::load_active_subscriptions(std::vector<StoredSubscription>& out) {
     if (!enabled_ || !mongo_ || !mongo_->is_connected()) return Result::kOk;
 
-    try {
-        auto client = mongo_->acquire();
-        if (!client.valid()) return Result::kPersistenceError;
-        auto coll = client.collection(config_.mongo_collection_subs);
+    // Build filter: { "lifecycle": { "$in": ["Active", "Pending"] } }
+    // Since MongoPool only extracts UTF8/INT32/BOOL, and $in requires an array,
+    // we do two separate queries: one for "Active", one for "Pending".
 
-        // Load only Active/Pending subscriptions
-        auto filter = make_document(
-            kvp("lifecycle", make_document(
-                kvp("$in", [](bsoncxx::builder::basic::sub_array arr) {
-                    arr.append("Active");
-                    arr.append("Pending");
-                })
-            ))
-        );
+    auto load_by_lifecycle = [&](const char* lifecycle_str) -> Result {
+        bson_t *query = bson_new();
+        BSON_APPEND_UTF8(query, "lifecycle", lifecycle_str);
 
-        auto cursor = coll.find(filter.view());
-        for (auto&& doc : cursor) {
+        MongoPool pool;
+        int ok = pool.Execute(query, nullptr, MONGO_FIND,
+                              __FILE__, __LINE__, __func__,
+                              config_.mongo_database.c_str(),
+                              config_.mongo_collection_subs.c_str());
+        if (!ok) {
+            LOG_ERROR("SubStore: find failed for lifecycle=%s", lifecycle_str);
+            return Result::kPersistenceError;
+        }
+
+        while (pool.NextRow()) {
             StoredSubscription stored;
             auto& rec = stored.record;
 
-            auto get_str = [&doc](const char* key) -> std::string {
-                auto it = doc.find(key);
-                if (it == doc.end() || it->type() != bsoncxx::type::k_utf8) return "";
-                return std::string(it->get_string().value);
-            };
-            auto get_int = [&doc](const char* key, int def = 0) -> int {
-                auto it = doc.find(key);
-                if (it == doc.end()) return def;
-                if (it->type() == bsoncxx::type::k_int32) return it->get_int32().value;
-                if (it->type() == bsoncxx::type::k_int64) return static_cast<int>(it->get_int64().value);
-                return def;
-            };
+            rec.dialog_id            = pool.getString("dialog_id");
+            rec.tenant_id            = pool.getString("tenant_id");
+            rec.type                 = subscription_type_from_string(pool.getString("type"));
+            rec.lifecycle            = lifecycle_from_string(pool.getString("lifecycle"));
+            rec.cseq                 = static_cast<uint32_t>(pool.getInt("cseq"));
+            rec.blf_monitored_uri    = pool.getString("blf_monitored_uri");
+            rec.blf_last_state       = pool.getString("blf_last_state");
+            rec.blf_last_direction   = pool.getString("blf_last_direction");
+            rec.blf_presence_call_id = pool.getString("blf_presence_call_id");
+            rec.blf_last_notify_body = pool.getString("blf_last_notify_body");
+            rec.blf_notify_version   = static_cast<uint32_t>(pool.getInt("blf_notify_version"));
+            rec.mwi_new_messages     = pool.getInt("mwi_new_messages");
+            rec.mwi_old_messages     = pool.getInt("mwi_old_messages");
+            rec.mwi_account_uri      = pool.getString("mwi_account_uri");
+            rec.mwi_last_notify_body = pool.getString("mwi_last_notify_body");
+            rec.from_uri             = pool.getString("from_uri");
+            rec.from_tag             = pool.getString("from_tag");
+            rec.to_uri               = pool.getString("to_uri");
+            rec.to_tag               = pool.getString("to_tag");
+            rec.call_id              = pool.getString("call_id");
+            rec.contact_uri          = pool.getString("contact_uri");
 
-            rec.dialog_id           = get_str("dialog_id");
-            rec.tenant_id           = get_str("tenant_id");
-            rec.type                = subscription_type_from_string(get_str("type"));
-            rec.lifecycle           = lifecycle_from_string(get_str("lifecycle"));
-            rec.cseq                = static_cast<uint32_t>(get_int("cseq"));
-            rec.blf_monitored_uri   = get_str("blf_monitored_uri");
-            rec.blf_last_state      = get_str("blf_last_state");
-            rec.blf_last_direction  = get_str("blf_last_direction");
-            rec.blf_presence_call_id = get_str("blf_presence_call_id");
-            rec.blf_last_notify_body = get_str("blf_last_notify_body");
-            rec.blf_notify_version  = static_cast<uint32_t>(get_int("blf_notify_version"));
-            rec.mwi_new_messages    = get_int("mwi_new_messages");
-            rec.mwi_old_messages    = get_int("mwi_old_messages");
-            rec.mwi_account_uri     = get_str("mwi_account_uri");
-            rec.mwi_last_notify_body = get_str("mwi_last_notify_body");
-            rec.from_uri            = get_str("from_uri");
-            rec.from_tag            = get_str("from_tag");
-            rec.to_uri              = get_str("to_uri");
-            rec.to_tag              = get_str("to_tag");
-            rec.call_id             = get_str("call_id");
-            rec.contact_uri         = get_str("contact_uri");
-
-            int64_t exp_ms = get_int("expires_at");
-            if (exp_ms > 0) {
-                rec.expires_at = TimePoint(Millisecs(exp_ms));
+            int exp_sec = pool.getInt("expires_at");
+            if (exp_sec > 0) {
+                rec.expires_at = TimePoint(Seconds(exp_sec));
             }
 
             rec.last_activity = Clock::now();
@@ -216,38 +273,77 @@ Result SubscriptionStore::load_active_subscriptions(std::vector<StoredSubscripti
             stats_.loads.fetch_add(1, std::memory_order_relaxed);
         }
 
-        LOG_INFO("SubStore: loaded %zu active subscriptions", out.size());
         return Result::kOk;
+    };
 
-    } catch (const mongocxx::exception& e) {
+    Result r1 = load_by_lifecycle("Active");
+    Result r2 = load_by_lifecycle("Pending");
+
+    if (r1 != Result::kOk || r2 != Result::kOk) {
         stats_.errors.fetch_add(1, std::memory_order_relaxed);
-        LOG_ERROR("SubStore: load failed: %s", e.what());
+        LOG_ERROR("SubStore: load failed");
         return Result::kPersistenceError;
     }
+
+    mongo_->mutable_stats().operations.fetch_add(2, std::memory_order_relaxed);
+    LOG_INFO("SubStore: loaded %zu active subscriptions", out.size());
+    return Result::kOk;
 }
 
 Result SubscriptionStore::load_subscription(const std::string& dialog_id,
                                               StoredSubscription& out) {
     if (!enabled_ || !mongo_ || !mongo_->is_connected()) return Result::kNotFound;
 
-    try {
-        auto client = mongo_->acquire();
-        if (!client.valid()) return Result::kPersistenceError;
-        auto coll = client.collection(config_.mongo_collection_subs);
-        auto result = coll.find_one(make_document(kvp("dialog_id", dialog_id)));
+    bson_t *query = bson_new();
+    BSON_APPEND_UTF8(query, "dialog_id", dialog_id.c_str());
 
-        if (!result) return Result::kNotFound;
-
-        // Reuse load logic via vector (not ideal but keeps code DRY)
-        std::vector<StoredSubscription> vec;
-        // For single doc, we'd use the same field extraction as above
-        // Simplified: return not found for now — production would extract fields
-        return Result::kNotFound;
-
-    } catch (const mongocxx::exception& e) {
+    MongoPool pool;
+    int ok = pool.Execute(query, nullptr, MONGO_FIND,
+                          __FILE__, __LINE__, __func__,
+                          config_.mongo_database.c_str(),
+                          config_.mongo_collection_subs.c_str());
+    if (!ok) {
         stats_.errors.fetch_add(1, std::memory_order_relaxed);
         return Result::kPersistenceError;
     }
+
+    if (!pool.NextRow()) {
+        return Result::kNotFound;
+    }
+
+    auto& rec = out.record;
+    rec.dialog_id            = pool.getString("dialog_id");
+    rec.tenant_id            = pool.getString("tenant_id");
+    rec.type                 = subscription_type_from_string(pool.getString("type"));
+    rec.lifecycle            = lifecycle_from_string(pool.getString("lifecycle"));
+    rec.cseq                 = static_cast<uint32_t>(pool.getInt("cseq"));
+    rec.blf_monitored_uri    = pool.getString("blf_monitored_uri");
+    rec.blf_last_state       = pool.getString("blf_last_state");
+    rec.blf_last_direction   = pool.getString("blf_last_direction");
+    rec.blf_presence_call_id = pool.getString("blf_presence_call_id");
+    rec.blf_last_notify_body = pool.getString("blf_last_notify_body");
+    rec.blf_notify_version   = static_cast<uint32_t>(pool.getInt("blf_notify_version"));
+    rec.mwi_new_messages     = pool.getInt("mwi_new_messages");
+    rec.mwi_old_messages     = pool.getInt("mwi_old_messages");
+    rec.mwi_account_uri      = pool.getString("mwi_account_uri");
+    rec.mwi_last_notify_body = pool.getString("mwi_last_notify_body");
+    rec.from_uri             = pool.getString("from_uri");
+    rec.from_tag             = pool.getString("from_tag");
+    rec.to_uri               = pool.getString("to_uri");
+    rec.to_tag               = pool.getString("to_tag");
+    rec.call_id              = pool.getString("call_id");
+    rec.contact_uri          = pool.getString("contact_uri");
+
+    int exp_sec = pool.getInt("expires_at");
+    if (exp_sec > 0) {
+        rec.expires_at = TimePoint(Seconds(exp_sec));
+    }
+
+    rec.last_activity = Clock::now();
+    out.needs_full_state_notify = true;
+
+    mongo_->mutable_stats().operations.fetch_add(1, std::memory_order_relaxed);
+    return Result::kOk;
 }
 
 void SubscriptionStore::sync_thread_func() {

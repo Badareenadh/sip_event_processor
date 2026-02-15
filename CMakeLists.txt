@@ -4,13 +4,20 @@ project(sip_event_processor VERSION 3.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ---------------------------------------------------------------------------
-# Custom installation paths for dependencies
-#   cmake -DSOFIA_SIP_ROOT=/opt/sofia-sip -DMONGO_CXX_ROOT=/opt/mongo-cxx-driver ..
+# Dependency root — all custom libraries live under this prefix
+#   /opt/sip_event_processor/SofiaSip/
+#   /opt/sip_event_processor/mongo-c-driver/
+#   /opt/sip_event_processor/mongodbpool/
+# Override with: cmake -DDEPS_ROOT=/other/path ..
 # ---------------------------------------------------------------------------
-set(SOFIA_SIP_ROOT "" CACHE PATH "Custom install prefix for Sofia-SIP library")
-set(MONGO_CXX_ROOT "" CACHE PATH "Custom install prefix for MongoDB C++ driver (mongocxx/bsoncxx)")
+set(DEPS_ROOT "/opt/sip_event_processor" CACHE PATH "Root directory for all custom dependencies")
+
+set(SOFIA_SIP_ROOT   "${DEPS_ROOT}/SofiaSip"       CACHE PATH "Sofia-SIP install prefix")
+set(MONGO_C_ROOT     "${DEPS_ROOT}/mongo-c-driver"  CACHE PATH "MongoDB C driver install prefix")
+set(MONGODBPOOL_ROOT "${DEPS_ROOT}/mongodbpool"     CACHE PATH "Custom MongoPool library install prefix")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-fsanitize=thread -g)
@@ -24,27 +31,26 @@ if(ENABLE_ASAN)
 endif()
 
 # ---------------------------------------------------------------------------
-# Sofia-SIP  — extend PKG_CONFIG_PATH when a custom root is given
+# Sofia-SIP (pkg-config from custom prefix)
 # ---------------------------------------------------------------------------
-if(SOFIA_SIP_ROOT)
-    # Typical pkg-config locations under a custom prefix
-    set(ENV{PKG_CONFIG_PATH}
-        "${SOFIA_SIP_ROOT}/lib/pkgconfig:${SOFIA_SIP_ROOT}/lib64/pkgconfig:$ENV{PKG_CONFIG_PATH}")
-endif()
+set(ENV{PKG_CONFIG_PATH}
+    "${SOFIA_SIP_ROOT}/lib/pkgconfig:${SOFIA_SIP_ROOT}/lib64/pkgconfig:$ENV{PKG_CONFIG_PATH}")
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SOFIA REQUIRED sofia-sip-ua)
 
 # ---------------------------------------------------------------------------
-# MongoDB C++ driver — extend CMAKE_PREFIX_PATH when a custom root is given
+# MongoDB C driver — libmongoc + libbson (pkg-config from custom prefix)
 # ---------------------------------------------------------------------------
-if(MONGO_CXX_ROOT)
-    list(APPEND CMAKE_PREFIX_PATH "${MONGO_CXX_ROOT}")
-endif()
+set(ENV{PKG_CONFIG_PATH}
+    "${MONGO_C_ROOT}/lib/pkgconfig:${MONGO_C_ROOT}/lib64/pkgconfig:$ENV{PKG_CONFIG_PATH}")
 
-find_package(mongocxx REQUIRED)
-find_package(bsoncxx REQUIRED)
+pkg_check_modules(MONGOC REQUIRED libmongoc-1.0)
+pkg_check_modules(BSON   REQUIRED libbson-1.0)
 
+# ---------------------------------------------------------------------------
+# Source files
+# ---------------------------------------------------------------------------
 add_executable(sip_event_processor
     src/main.cpp
     src/common/logger.cpp
@@ -73,40 +79,53 @@ add_executable(sip_event_processor
 )
 
 # ---------------------------------------------------------------------------
-# RPATH — so the binary finds shared libs at runtime from custom paths
+# RPATH — so the binary finds .so files at runtime from custom paths
 # ---------------------------------------------------------------------------
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 
-# Collect library directories that should be baked into RPATH
-set(_EXTRA_RPATH "")
-if(SOFIA_SIP_ROOT)
-    list(APPEND _EXTRA_RPATH "${SOFIA_SIP_ROOT}/lib" "${SOFIA_SIP_ROOT}/lib64")
-endif()
-if(MONGO_CXX_ROOT)
-    list(APPEND _EXTRA_RPATH "${MONGO_CXX_ROOT}/lib" "${MONGO_CXX_ROOT}/lib64")
-endif()
+set(_EXTRA_RPATH
+    "${SOFIA_SIP_ROOT}/lib"
+    "${MONGO_C_ROOT}/lib"
+    "${MONGO_C_ROOT}/lib64"
+    "${MONGODBPOOL_ROOT}/lib"
+)
 
+# ---------------------------------------------------------------------------
+# Include directories
+# ---------------------------------------------------------------------------
 target_include_directories(sip_event_processor PRIVATE
     ${CMAKE_SOURCE_DIR}/include
+    ${MONGODBPOOL_ROOT}/include
     ${SOFIA_INCLUDE_DIRS}
+    ${MONGOC_INCLUDE_DIRS}
+    ${BSON_INCLUDE_DIRS}
 )
 
-# Add library search dirs from pkg-config and custom roots
+# ---------------------------------------------------------------------------
+# Library search directories
+# ---------------------------------------------------------------------------
 target_link_directories(sip_event_processor PRIVATE
     ${SOFIA_LIBRARY_DIRS}
+    ${MONGOC_LIBRARY_DIRS}
+    ${BSON_LIBRARY_DIRS}
+    ${MONGO_C_ROOT}/lib
+    ${MONGO_C_ROOT}/lib64
+    ${MONGODBPOOL_ROOT}/lib
 )
 
+# ---------------------------------------------------------------------------
+# Link libraries
+# ---------------------------------------------------------------------------
 target_link_libraries(sip_event_processor PRIVATE
     ${SOFIA_LIBRARIES}
-    mongo::mongocxx_shared
-    mongo::bsoncxx_shared
+    ${MONGOC_LIBRARIES}
+    ${BSON_LIBRARIES}
+    mongodbpool
     pthread
 )
 
-if(_EXTRA_RPATH)
-    set_target_properties(sip_event_processor PROPERTIES
-        BUILD_RPATH "${_EXTRA_RPATH}"
-        INSTALL_RPATH "${_EXTRA_RPATH}"
-    )
-endif()
+set_target_properties(sip_event_processor PROPERTIES
+    BUILD_RPATH   "${_EXTRA_RPATH}"
+    INSTALL_RPATH "${_EXTRA_RPATH}"
+)

@@ -90,7 +90,7 @@ private:
     void flush_pending();
 
     // Serialize/deserialize subscription records
-    // (Implemented using bsoncxx builders — actual implementation in .cpp)
+    // (Implemented using libbson / MongoPool — actual implementation in .cpp)
     void serialize_record(const SubscriptionRecord& record, /* bson doc */ void* doc);
     bool deserialize_record(const void* doc, SubscriptionRecord& record);
 

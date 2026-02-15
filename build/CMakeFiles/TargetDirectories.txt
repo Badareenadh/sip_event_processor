@@ -1,0 +1,3 @@
+/home/wsadmin/src/badareenadh-ccp/sip_event_processor/build/CMakeFiles/sip_event_processor.dir
+/home/wsadmin/src/badareenadh-ccp/sip_event_processor/build/CMakeFiles/edit_cache.dir
+/home/wsadmin/src/badareenadh-ccp/sip_event_processor/build/CMakeFiles/rebuild_cache.dir

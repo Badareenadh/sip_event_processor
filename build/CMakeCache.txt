@@ -201,8 +201,17 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Root directory for all custom dependencies
+DEPS_ROOT:PATH=/opt/sip_event_processor
+
 //Enable AddressSanitizer
 ENABLE_ASAN:BOOL=OFF
+
+//Custom MongoPool library install prefix
+MONGODBPOOL_ROOT:PATH=/opt/sip_event_processor/mongodbpool
+
+//MongoDB C driver install prefix
+MONGO_C_ROOT:PATH=/opt/sip_event_processor/mongo-c-driver
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
@@ -210,11 +219,20 @@ PKG_CONFIG_ARGN:STRING=
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 
-//The directory containing a CMake configuration file for mongocxx.
-mongocxx_DIR:PATH=mongocxx_DIR-NOTFOUND
+//Sofia-SIP install prefix
+SOFIA_SIP_ROOT:PATH=/opt/sip_event_processor/SofiaSip
 
 //Path to a library.
-pkgcfg_lib_SOFIA_sofia-sip-ua:FILEPATH=/usr/lib64/libsofia-sip-ua.so
+pkgcfg_lib_BSON_bson-1.0:FILEPATH=/opt/sip_event_processor/mongo-c-driver/lib64/libbson-1.0.so
+
+//Path to a library.
+pkgcfg_lib_MONGOC_bson-1.0:FILEPATH=/opt/sip_event_processor/mongo-c-driver/lib64/libbson-1.0.so
+
+//Path to a library.
+pkgcfg_lib_MONGOC_mongoc-1.0:FILEPATH=/opt/sip_event_processor/mongo-c-driver/lib64/libmongoc-1.0.so
+
+//Path to a library.
+pkgcfg_lib_SOFIA_sofia-sip-ua:FILEPATH=/opt/sip_event_processor/SofiaSip/lib/libsofia-sip-ua.so
 
 //Value Computed by CMake
 sip_event_processor_BINARY_DIR:STATIC=/home/wsadmin/src/badareenadh-ccp/sip_event_processor/build
@@ -230,6 +248,41 @@ sip_event_processor_SOURCE_DIR:STATIC=/home/wsadmin/src/badareenadh-ccp/sip_even
 # INTERNAL cache entries
 ########################
 
+BSON_CFLAGS:INTERNAL=-I/opt/sip_event_processor/mongo-c-driver/include/libbson-1.0
+BSON_CFLAGS_I:INTERNAL=
+BSON_CFLAGS_OTHER:INTERNAL=
+BSON_FOUND:INTERNAL=1
+BSON_INCLUDEDIR:INTERNAL=/opt/sip_event_processor/mongo-c-driver/include
+BSON_INCLUDE_DIRS:INTERNAL=/opt/sip_event_processor/mongo-c-driver/include/libbson-1.0
+BSON_LDFLAGS:INTERNAL=-L/opt/sip_event_processor/mongo-c-driver/lib;-lbson-1.0
+BSON_LDFLAGS_OTHER:INTERNAL=
+BSON_LIBDIR:INTERNAL=/opt/sip_event_processor/mongo-c-driver/lib
+BSON_LIBRARIES:INTERNAL=bson-1.0
+BSON_LIBRARY_DIRS:INTERNAL=/opt/sip_event_processor/mongo-c-driver/lib
+BSON_LIBS:INTERNAL=
+BSON_LIBS_L:INTERNAL=
+BSON_LIBS_OTHER:INTERNAL=
+BSON_LIBS_PATHS:INTERNAL=
+BSON_MODULE_NAME:INTERNAL=libbson-1.0
+BSON_PREFIX:INTERNAL=/opt/sip_event_processor/mongo-c-driver
+BSON_STATIC_CFLAGS:INTERNAL=-I/opt/sip_event_processor/mongo-c-driver/include/libbson-1.0
+BSON_STATIC_CFLAGS_I:INTERNAL=
+BSON_STATIC_CFLAGS_OTHER:INTERNAL=
+BSON_STATIC_INCLUDE_DIRS:INTERNAL=/opt/sip_event_processor/mongo-c-driver/include/libbson-1.0
+BSON_STATIC_LDFLAGS:INTERNAL=-L/opt/sip_event_processor/mongo-c-driver/lib;-lbson-1.0
+BSON_STATIC_LDFLAGS_OTHER:INTERNAL=
+BSON_STATIC_LIBDIR:INTERNAL=
+BSON_STATIC_LIBRARIES:INTERNAL=bson-1.0
+BSON_STATIC_LIBRARY_DIRS:INTERNAL=/opt/sip_event_processor/mongo-c-driver/lib
+BSON_STATIC_LIBS:INTERNAL=
+BSON_STATIC_LIBS_L:INTERNAL=
+BSON_STATIC_LIBS_OTHER:INTERNAL=
+BSON_STATIC_LIBS_PATHS:INTERNAL=
+BSON_VERSION:INTERNAL=1.14.0
+BSON_libbson-1.0_INCLUDEDIR:INTERNAL=
+BSON_libbson-1.0_LIBDIR:INTERNAL=
+BSON_libbson-1.0_PREFIX:INTERNAL=
+BSON_libbson-1.0_VERSION:INTERNAL=
 //ADVANCED property for variable: CMAKE_ADDR2LINE
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
@@ -361,50 +414,95 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.4.2()]
+MONGOC_CFLAGS:INTERNAL=-I/opt/sip_event_processor/mongo-c-driver/include/libmongoc-1.0;-I/opt/sip_event_processor/mongo-c-driver/include/libbson-1.0
+MONGOC_CFLAGS_I:INTERNAL=
+MONGOC_CFLAGS_OTHER:INTERNAL=
+MONGOC_FOUND:INTERNAL=1
+MONGOC_INCLUDEDIR:INTERNAL=/opt/sip_event_processor/mongo-c-driver/include
+MONGOC_INCLUDE_DIRS:INTERNAL=/opt/sip_event_processor/mongo-c-driver/include/libmongoc-1.0;/opt/sip_event_processor/mongo-c-driver/include/libbson-1.0
+MONGOC_LDFLAGS:INTERNAL=-L/opt/sip_event_processor/mongo-c-driver/lib;-lmongoc-1.0;-lbson-1.0
+MONGOC_LDFLAGS_OTHER:INTERNAL=
+MONGOC_LIBDIR:INTERNAL=/opt/sip_event_processor/mongo-c-driver/lib
+MONGOC_LIBRARIES:INTERNAL=mongoc-1.0;bson-1.0
+MONGOC_LIBRARY_DIRS:INTERNAL=/opt/sip_event_processor/mongo-c-driver/lib
+MONGOC_LIBS:INTERNAL=
+MONGOC_LIBS_L:INTERNAL=
+MONGOC_LIBS_OTHER:INTERNAL=
+MONGOC_LIBS_PATHS:INTERNAL=
+MONGOC_MODULE_NAME:INTERNAL=libmongoc-1.0
+MONGOC_PREFIX:INTERNAL=/opt/sip_event_processor/mongo-c-driver
+MONGOC_STATIC_CFLAGS:INTERNAL=-I/opt/sip_event_processor/mongo-c-driver/include/libmongoc-1.0;-I/opt/sip_event_processor/mongo-c-driver/include/libbson-1.0
+MONGOC_STATIC_CFLAGS_I:INTERNAL=
+MONGOC_STATIC_CFLAGS_OTHER:INTERNAL=
+MONGOC_STATIC_INCLUDE_DIRS:INTERNAL=/opt/sip_event_processor/mongo-c-driver/include/libmongoc-1.0;/opt/sip_event_processor/mongo-c-driver/include/libbson-1.0
+MONGOC_STATIC_LDFLAGS:INTERNAL=-L/opt/sip_event_processor/mongo-c-driver/lib;-lmongoc-1.0;-lbson-1.0
+MONGOC_STATIC_LDFLAGS_OTHER:INTERNAL=
+MONGOC_STATIC_LIBDIR:INTERNAL=
+MONGOC_STATIC_LIBRARIES:INTERNAL=mongoc-1.0;bson-1.0
+MONGOC_STATIC_LIBRARY_DIRS:INTERNAL=/opt/sip_event_processor/mongo-c-driver/lib
+MONGOC_STATIC_LIBS:INTERNAL=
+MONGOC_STATIC_LIBS_L:INTERNAL=
+MONGOC_STATIC_LIBS_OTHER:INTERNAL=
+MONGOC_STATIC_LIBS_PATHS:INTERNAL=
+MONGOC_VERSION:INTERNAL=1.14.0
+MONGOC_libmongoc-1.0_INCLUDEDIR:INTERNAL=
+MONGOC_libmongoc-1.0_LIBDIR:INTERNAL=
+MONGOC_libmongoc-1.0_PREFIX:INTERNAL=
+MONGOC_libmongoc-1.0_VERSION:INTERNAL=
 //ADVANCED property for variable: PKG_CONFIG_ARGN
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
-SOFIA_CFLAGS:INTERNAL=-I/usr/include/sofia-sip-1.13
+SOFIA_CFLAGS:INTERNAL=-I/opt/sip_event_processor/SofiaSip/include/sofia-sip-1.12
 SOFIA_CFLAGS_I:INTERNAL=
 SOFIA_CFLAGS_OTHER:INTERNAL=
 SOFIA_FOUND:INTERNAL=1
-SOFIA_INCLUDEDIR:INTERNAL=/usr/include
-SOFIA_INCLUDE_DIRS:INTERNAL=/usr/include/sofia-sip-1.13
-SOFIA_LDFLAGS:INTERNAL=-L/usr/lib64;-lsofia-sip-ua
+SOFIA_INCLUDEDIR:INTERNAL=/opt/sip_event_processor/SofiaSip/include
+SOFIA_INCLUDE_DIRS:INTERNAL=/opt/sip_event_processor/SofiaSip/include/sofia-sip-1.12
+SOFIA_LDFLAGS:INTERNAL=-L/opt/sip_event_processor/SofiaSip/lib;-lsofia-sip-ua
 SOFIA_LDFLAGS_OTHER:INTERNAL=
-SOFIA_LIBDIR:INTERNAL=/usr/lib64
+SOFIA_LIBDIR:INTERNAL=/opt/sip_event_processor/SofiaSip/lib
 SOFIA_LIBRARIES:INTERNAL=sofia-sip-ua
-SOFIA_LIBRARY_DIRS:INTERNAL=/usr/lib64
+SOFIA_LIBRARY_DIRS:INTERNAL=/opt/sip_event_processor/SofiaSip/lib
 SOFIA_LIBS:INTERNAL=
 SOFIA_LIBS_L:INTERNAL=
 SOFIA_LIBS_OTHER:INTERNAL=
 SOFIA_LIBS_PATHS:INTERNAL=
 SOFIA_MODULE_NAME:INTERNAL=sofia-sip-ua
-SOFIA_PREFIX:INTERNAL=/usr
-SOFIA_STATIC_CFLAGS:INTERNAL=-I/usr/include/sofia-sip-1.13
+SOFIA_PREFIX:INTERNAL=/opt/sip_event_processor/SofiaSip
+SOFIA_STATIC_CFLAGS:INTERNAL=-I/opt/sip_event_processor/SofiaSip/include/sofia-sip-1.12
 SOFIA_STATIC_CFLAGS_I:INTERNAL=
 SOFIA_STATIC_CFLAGS_OTHER:INTERNAL=
-SOFIA_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/sofia-sip-1.13
-SOFIA_STATIC_LDFLAGS:INTERNAL=-L/usr/lib64;-lsofia-sip-ua;-lssl;-lcrypto;-lpthread
+SOFIA_STATIC_INCLUDE_DIRS:INTERNAL=/opt/sip_event_processor/SofiaSip/include/sofia-sip-1.12
+SOFIA_STATIC_LDFLAGS:INTERNAL=-L/opt/sip_event_processor/SofiaSip/lib;-lsofia-sip-ua;-lssl;-lcrypto;-lpthread
 SOFIA_STATIC_LDFLAGS_OTHER:INTERNAL=
 SOFIA_STATIC_LIBDIR:INTERNAL=
 SOFIA_STATIC_LIBRARIES:INTERNAL=sofia-sip-ua;ssl;crypto;pthread
-SOFIA_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib64
+SOFIA_STATIC_LIBRARY_DIRS:INTERNAL=/opt/sip_event_processor/SofiaSip/lib
 SOFIA_STATIC_LIBS:INTERNAL=
 SOFIA_STATIC_LIBS_L:INTERNAL=
 SOFIA_STATIC_LIBS_OTHER:INTERNAL=
 SOFIA_STATIC_LIBS_PATHS:INTERNAL=
-SOFIA_VERSION:INTERNAL=1.13.17
+SOFIA_VERSION:INTERNAL=1.12.11
 SOFIA_sofia-sip-ua_INCLUDEDIR:INTERNAL=
 SOFIA_sofia-sip-ua_LIBDIR:INTERNAL=
 SOFIA_sofia-sip-ua_PREFIX:INTERNAL=
 SOFIA_sofia-sip-ua_VERSION:INTERNAL=
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
+__pkg_config_arguments_BSON:INTERNAL=REQUIRED;libbson-1.0
+__pkg_config_arguments_MONGOC:INTERNAL=REQUIRED;libmongoc-1.0
 __pkg_config_arguments_SOFIA:INTERNAL=REQUIRED;sofia-sip-ua
+__pkg_config_checked_BSON:INTERNAL=1
+__pkg_config_checked_MONGOC:INTERNAL=1
 __pkg_config_checked_SOFIA:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_BSON_bson-1.0
+pkgcfg_lib_BSON_bson-1.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_MONGOC_bson-1.0
+pkgcfg_lib_MONGOC_bson-1.0-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: pkgcfg_lib_MONGOC_mongoc-1.0
+pkgcfg_lib_MONGOC_mongoc-1.0-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_SOFIA_sofia-sip-ua
 pkgcfg_lib_SOFIA_sofia-sip-ua-ADVANCED:INTERNAL=1
-prefix_result:INTERNAL=/usr/lib64
+prefix_result:INTERNAL=/opt/sip_event_processor/mongo-c-driver/lib
 
