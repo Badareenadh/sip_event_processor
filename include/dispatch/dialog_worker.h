@@ -24,6 +24,7 @@ class BlfProcessor;
 class MwiProcessor;
 class SlowEventLogger;
 class SubscriptionStore;
+class SipStackManager;
 
 struct WorkerStats {
     std::atomic<uint64_t> events_received{0};
@@ -34,13 +35,17 @@ struct WorkerStats {
     std::atomic<uint64_t> dialogs_reaped{0};
     std::atomic<uint64_t> queue_depth{0};
     std::atomic<uint64_t> slow_events{0};
+    std::atomic<uint64_t> notify_sent{0};
+    std::atomic<uint64_t> notify_errors{0};
+    std::atomic<uint64_t> subscribe_responses_sent{0};
 };
 
 class DialogWorker {
 public:
     DialogWorker(size_t worker_index, const Config& config,
                  std::shared_ptr<SlowEventLogger> slow_logger,
-                 std::shared_ptr<SubscriptionStore> sub_store);
+                 std::shared_ptr<SubscriptionStore> sub_store,
+                 SipStackManager* stack_mgr = nullptr);
     ~DialogWorker();
 
     Result start();
@@ -70,22 +75,40 @@ public:
     DialogWorker& operator=(const DialogWorker&) = delete;
 
 private:
+    // DialogContext must be declared before member functions that use it
+    struct DialogContext {
+        SubscriptionRecord record;
+        std::queue<std::unique_ptr<SipEvent>> event_queue;
+        nua_handle_t* nua_handle = nullptr;  // Sofia handle for this dialog
+    };
+
     void run();
     void process_dialog_queues();
-    void process_event(const std::string& dialog_id, SubscriptionRecord& record,
+    void process_event(const std::string& dialog_id, DialogContext& ctx,
                        std::unique_ptr<SipEvent> event);
     void process_presence_trigger(const std::string& dialog_id,
-                                   SubscriptionRecord& record, const SipEvent& event);
+                                   DialogContext& ctx, const SipEvent& event);
     void handle_new_subscription(const std::string& dialog_id, const SipEvent& event);
     void cleanup_terminated_dialogs();
     void index_blf_subscription(const std::string& dialog_id, const SubscriptionRecord& rec);
     void deindex_blf_subscription(const std::string& dialog_id, const SubscriptionRecord& rec);
     void persist_record(const SubscriptionRecord& record, bool immediate = false);
 
+    // SIP response/NOTIFY sending
+    void send_subscribe_response(DialogContext& ctx, const SipEvent& event,
+                                 int status, const char* phrase);
+    void send_sip_notify(DialogContext& ctx, const std::string& content_type,
+                         const std::string& body, const char* sub_state);
+    void send_initial_notify(DialogContext& ctx);
+    void handle_notify_response(const std::string& dialog_id, DialogContext& ctx,
+                                const SipEvent& event);
+    void release_nua_handle(DialogContext& ctx);
+
     size_t worker_index_;
     Config config_;
     std::shared_ptr<SlowEventLogger> slow_logger_;
     std::shared_ptr<SubscriptionStore> sub_store_;
+    SipStackManager* stack_mgr_;
 
     std::thread thread_;
     std::atomic<bool> running_{false};
@@ -98,10 +121,6 @@ private:
     mutable std::mutex terminate_mu_;
     std::vector<std::string> pending_terminates_;
 
-    struct DialogContext {
-        SubscriptionRecord record;
-        std::queue<std::unique_ptr<SipEvent>> event_queue;
-    };
     std::unordered_map<std::string, DialogContext> dialogs_;
 
     std::unique_ptr<BlfProcessor> blf_processor_;

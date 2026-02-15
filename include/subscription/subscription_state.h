@@ -42,7 +42,8 @@ struct SubscriptionRecord {
     TimePoint    created_at     = Clock::now();
     TimePoint    last_activity  = Clock::now();
     TimePoint    expires_at     = {};
-    uint32_t     cseq           = 0;
+    uint32_t     cseq           = 0;       // Incoming SUBSCRIBE CSeq
+    uint32_t     notify_cseq    = 0;       // Outgoing NOTIFY CSeq counter
     uint64_t     events_processed = 0;
     bool         is_processing  = false;
     TimePoint    processing_started_at = {};

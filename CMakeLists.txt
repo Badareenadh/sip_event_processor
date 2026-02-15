@@ -49,10 +49,9 @@ pkg_check_modules(MONGOC REQUIRED libmongoc-1.0)
 pkg_check_modules(BSON   REQUIRED libbson-1.0)
 
 # ---------------------------------------------------------------------------
-# Source files
+# Source files (shared between main binary and tests)
 # ---------------------------------------------------------------------------
-add_executable(sip_event_processor
-    src/main.cpp
+set(LIB_SOURCES
     src/common/logger.cpp
     src/common/config.cpp
     src/common/slow_event_logger.cpp
@@ -77,6 +76,62 @@ add_executable(sip_event_processor
     src/http/health_handler.cpp
     src/http/stats_handler.cpp
 )
+
+add_executable(sip_event_processor src/main.cpp ${LIB_SOURCES})
+
+# ---------------------------------------------------------------------------
+# Unit tests (Google Test)
+# ---------------------------------------------------------------------------
+option(BUILD_TESTS "Build unit tests" ON)
+
+if(BUILD_TESTS)
+    enable_testing()
+    find_package(GTest REQUIRED)
+
+    add_executable(sip_processor_tests
+        tests/test_config.cpp
+        tests/test_dialog_id_builder.cpp
+        tests/test_blf_subscription_index.cpp
+        tests/test_presence_xml_parser.cpp
+        tests/test_presence_failover.cpp
+        tests/test_slow_event_logger.cpp
+        tests/test_mwi_parser.cpp
+        ${LIB_SOURCES}
+    )
+
+    target_include_directories(sip_processor_tests PRIVATE
+        ${CMAKE_SOURCE_DIR}/include
+        ${MONGODBPOOL_ROOT}/include
+        ${SOFIA_INCLUDE_DIRS}
+        ${MONGOC_INCLUDE_DIRS}
+        ${BSON_INCLUDE_DIRS}
+    )
+
+    target_link_directories(sip_processor_tests PRIVATE
+        ${SOFIA_LIBRARY_DIRS}
+        ${MONGOC_LIBRARY_DIRS}
+        ${BSON_LIBRARY_DIRS}
+        ${MONGO_C_ROOT}/lib
+        ${MONGO_C_ROOT}/lib64
+        ${MONGODBPOOL_ROOT}/lib
+    )
+
+    target_link_libraries(sip_processor_tests PRIVATE
+        GTest::gtest_main
+        ${SOFIA_LIBRARIES}
+        ${MONGOC_LIBRARIES}
+        ${BSON_LIBRARIES}
+        mongodbpool
+        pthread
+    )
+
+    set_target_properties(sip_processor_tests PROPERTIES
+        BUILD_RPATH   "${_EXTRA_RPATH}"
+        INSTALL_RPATH "${_EXTRA_RPATH}"
+    )
+
+    add_test(NAME unit_tests COMMAND sip_processor_tests)
+endif()
 
 # ---------------------------------------------------------------------------
 # RPATH — so the binary finds .so files at runtime from custom paths

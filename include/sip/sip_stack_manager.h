@@ -19,6 +19,16 @@ public:
     bool is_running() const { return running_.load(std::memory_order_acquire); }
     nua_t* nua() const { return nua_; }
     su_root_t* root() const { return root_; }
+
+    // Send a response to an incoming SUBSCRIBE request
+    void respond_to_subscribe(nua_handle_t* nh, int status, const char* phrase,
+                              uint32_t expires);
+
+    // Send a NOTIFY within a subscription dialog
+    void send_notify(nua_handle_t* nh, const char* event_type,
+                     const char* content_type, const char* body,
+                     const char* subscription_state_str);
+
     SipStackManager(const SipStackManager&) = delete;
     SipStackManager& operator=(const SipStackManager&) = delete;
 private:

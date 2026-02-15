@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /home/wsadmin/src/badareenadh-ccp/sip_event_processor/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -129,12 +139,26 @@ sip_event_processor/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/build
 .PHONY : sip_event_processor/fast
 
+#=============================================================================
+# Target rules for targets named sip_processor_tests
+
+# Build rule for target.
+sip_processor_tests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sip_processor_tests
+.PHONY : sip_processor_tests
+
+# fast build rule for target.
+sip_processor_tests/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/build
+.PHONY : sip_processor_tests/fast
+
 src/common/config.o: src/common/config.cpp.o
 .PHONY : src/common/config.o
 
 # target to build an object file
 src/common/config.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/config.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/config.cpp.o
 .PHONY : src/common/config.cpp.o
 
 src/common/config.i: src/common/config.cpp.i
@@ -143,6 +167,7 @@ src/common/config.i: src/common/config.cpp.i
 # target to preprocess a source file
 src/common/config.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/config.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/config.cpp.i
 .PHONY : src/common/config.cpp.i
 
 src/common/config.s: src/common/config.cpp.s
@@ -151,6 +176,7 @@ src/common/config.s: src/common/config.cpp.s
 # target to generate assembly for a file
 src/common/config.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/config.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/config.cpp.s
 .PHONY : src/common/config.cpp.s
 
 src/common/logger.o: src/common/logger.cpp.o
@@ -159,6 +185,7 @@ src/common/logger.o: src/common/logger.cpp.o
 # target to build an object file
 src/common/logger.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/logger.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/logger.cpp.o
 .PHONY : src/common/logger.cpp.o
 
 src/common/logger.i: src/common/logger.cpp.i
@@ -167,6 +194,7 @@ src/common/logger.i: src/common/logger.cpp.i
 # target to preprocess a source file
 src/common/logger.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/logger.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/logger.cpp.i
 .PHONY : src/common/logger.cpp.i
 
 src/common/logger.s: src/common/logger.cpp.s
@@ -175,6 +203,7 @@ src/common/logger.s: src/common/logger.cpp.s
 # target to generate assembly for a file
 src/common/logger.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/logger.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/logger.cpp.s
 .PHONY : src/common/logger.cpp.s
 
 src/common/slow_event_logger.o: src/common/slow_event_logger.cpp.o
@@ -183,6 +212,7 @@ src/common/slow_event_logger.o: src/common/slow_event_logger.cpp.o
 # target to build an object file
 src/common/slow_event_logger.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/slow_event_logger.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/slow_event_logger.cpp.o
 .PHONY : src/common/slow_event_logger.cpp.o
 
 src/common/slow_event_logger.i: src/common/slow_event_logger.cpp.i
@@ -191,6 +221,7 @@ src/common/slow_event_logger.i: src/common/slow_event_logger.cpp.i
 # target to preprocess a source file
 src/common/slow_event_logger.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/slow_event_logger.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/slow_event_logger.cpp.i
 .PHONY : src/common/slow_event_logger.cpp.i
 
 src/common/slow_event_logger.s: src/common/slow_event_logger.cpp.s
@@ -199,6 +230,7 @@ src/common/slow_event_logger.s: src/common/slow_event_logger.cpp.s
 # target to generate assembly for a file
 src/common/slow_event_logger.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/common/slow_event_logger.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/common/slow_event_logger.cpp.s
 .PHONY : src/common/slow_event_logger.cpp.s
 
 src/dispatch/dialog_dispatcher.o: src/dispatch/dialog_dispatcher.cpp.o
@@ -207,6 +239,7 @@ src/dispatch/dialog_dispatcher.o: src/dispatch/dialog_dispatcher.cpp.o
 # target to build an object file
 src/dispatch/dialog_dispatcher.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/dialog_dispatcher.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/dialog_dispatcher.cpp.o
 .PHONY : src/dispatch/dialog_dispatcher.cpp.o
 
 src/dispatch/dialog_dispatcher.i: src/dispatch/dialog_dispatcher.cpp.i
@@ -215,6 +248,7 @@ src/dispatch/dialog_dispatcher.i: src/dispatch/dialog_dispatcher.cpp.i
 # target to preprocess a source file
 src/dispatch/dialog_dispatcher.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/dialog_dispatcher.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/dialog_dispatcher.cpp.i
 .PHONY : src/dispatch/dialog_dispatcher.cpp.i
 
 src/dispatch/dialog_dispatcher.s: src/dispatch/dialog_dispatcher.cpp.s
@@ -223,6 +257,7 @@ src/dispatch/dialog_dispatcher.s: src/dispatch/dialog_dispatcher.cpp.s
 # target to generate assembly for a file
 src/dispatch/dialog_dispatcher.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/dialog_dispatcher.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/dialog_dispatcher.cpp.s
 .PHONY : src/dispatch/dialog_dispatcher.cpp.s
 
 src/dispatch/dialog_worker.o: src/dispatch/dialog_worker.cpp.o
@@ -231,6 +266,7 @@ src/dispatch/dialog_worker.o: src/dispatch/dialog_worker.cpp.o
 # target to build an object file
 src/dispatch/dialog_worker.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/dialog_worker.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/dialog_worker.cpp.o
 .PHONY : src/dispatch/dialog_worker.cpp.o
 
 src/dispatch/dialog_worker.i: src/dispatch/dialog_worker.cpp.i
@@ -239,6 +275,7 @@ src/dispatch/dialog_worker.i: src/dispatch/dialog_worker.cpp.i
 # target to preprocess a source file
 src/dispatch/dialog_worker.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/dialog_worker.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/dialog_worker.cpp.i
 .PHONY : src/dispatch/dialog_worker.cpp.i
 
 src/dispatch/dialog_worker.s: src/dispatch/dialog_worker.cpp.s
@@ -247,6 +284,7 @@ src/dispatch/dialog_worker.s: src/dispatch/dialog_worker.cpp.s
 # target to generate assembly for a file
 src/dispatch/dialog_worker.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/dialog_worker.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/dialog_worker.cpp.s
 .PHONY : src/dispatch/dialog_worker.cpp.s
 
 src/dispatch/stale_subscription_reaper.o: src/dispatch/stale_subscription_reaper.cpp.o
@@ -255,6 +293,7 @@ src/dispatch/stale_subscription_reaper.o: src/dispatch/stale_subscription_reaper
 # target to build an object file
 src/dispatch/stale_subscription_reaper.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/stale_subscription_reaper.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/stale_subscription_reaper.cpp.o
 .PHONY : src/dispatch/stale_subscription_reaper.cpp.o
 
 src/dispatch/stale_subscription_reaper.i: src/dispatch/stale_subscription_reaper.cpp.i
@@ -263,6 +302,7 @@ src/dispatch/stale_subscription_reaper.i: src/dispatch/stale_subscription_reaper
 # target to preprocess a source file
 src/dispatch/stale_subscription_reaper.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/stale_subscription_reaper.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/stale_subscription_reaper.cpp.i
 .PHONY : src/dispatch/stale_subscription_reaper.cpp.i
 
 src/dispatch/stale_subscription_reaper.s: src/dispatch/stale_subscription_reaper.cpp.s
@@ -271,6 +311,7 @@ src/dispatch/stale_subscription_reaper.s: src/dispatch/stale_subscription_reaper
 # target to generate assembly for a file
 src/dispatch/stale_subscription_reaper.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/dispatch/stale_subscription_reaper.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/dispatch/stale_subscription_reaper.cpp.s
 .PHONY : src/dispatch/stale_subscription_reaper.cpp.s
 
 src/http/health_handler.o: src/http/health_handler.cpp.o
@@ -279,6 +320,7 @@ src/http/health_handler.o: src/http/health_handler.cpp.o
 # target to build an object file
 src/http/health_handler.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/health_handler.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/health_handler.cpp.o
 .PHONY : src/http/health_handler.cpp.o
 
 src/http/health_handler.i: src/http/health_handler.cpp.i
@@ -287,6 +329,7 @@ src/http/health_handler.i: src/http/health_handler.cpp.i
 # target to preprocess a source file
 src/http/health_handler.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/health_handler.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/health_handler.cpp.i
 .PHONY : src/http/health_handler.cpp.i
 
 src/http/health_handler.s: src/http/health_handler.cpp.s
@@ -295,6 +338,7 @@ src/http/health_handler.s: src/http/health_handler.cpp.s
 # target to generate assembly for a file
 src/http/health_handler.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/health_handler.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/health_handler.cpp.s
 .PHONY : src/http/health_handler.cpp.s
 
 src/http/http_server.o: src/http/http_server.cpp.o
@@ -303,6 +347,7 @@ src/http/http_server.o: src/http/http_server.cpp.o
 # target to build an object file
 src/http/http_server.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/http_server.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/http_server.cpp.o
 .PHONY : src/http/http_server.cpp.o
 
 src/http/http_server.i: src/http/http_server.cpp.i
@@ -311,6 +356,7 @@ src/http/http_server.i: src/http/http_server.cpp.i
 # target to preprocess a source file
 src/http/http_server.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/http_server.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/http_server.cpp.i
 .PHONY : src/http/http_server.cpp.i
 
 src/http/http_server.s: src/http/http_server.cpp.s
@@ -319,6 +365,7 @@ src/http/http_server.s: src/http/http_server.cpp.s
 # target to generate assembly for a file
 src/http/http_server.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/http_server.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/http_server.cpp.s
 .PHONY : src/http/http_server.cpp.s
 
 src/http/stats_handler.o: src/http/stats_handler.cpp.o
@@ -327,6 +374,7 @@ src/http/stats_handler.o: src/http/stats_handler.cpp.o
 # target to build an object file
 src/http/stats_handler.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/stats_handler.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/stats_handler.cpp.o
 .PHONY : src/http/stats_handler.cpp.o
 
 src/http/stats_handler.i: src/http/stats_handler.cpp.i
@@ -335,6 +383,7 @@ src/http/stats_handler.i: src/http/stats_handler.cpp.i
 # target to preprocess a source file
 src/http/stats_handler.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/stats_handler.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/stats_handler.cpp.i
 .PHONY : src/http/stats_handler.cpp.i
 
 src/http/stats_handler.s: src/http/stats_handler.cpp.s
@@ -343,6 +392,7 @@ src/http/stats_handler.s: src/http/stats_handler.cpp.s
 # target to generate assembly for a file
 src/http/stats_handler.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/http/stats_handler.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/http/stats_handler.cpp.s
 .PHONY : src/http/stats_handler.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -375,6 +425,7 @@ src/persistence/mongo_client.o: src/persistence/mongo_client.cpp.o
 # target to build an object file
 src/persistence/mongo_client.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/persistence/mongo_client.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/persistence/mongo_client.cpp.o
 .PHONY : src/persistence/mongo_client.cpp.o
 
 src/persistence/mongo_client.i: src/persistence/mongo_client.cpp.i
@@ -383,6 +434,7 @@ src/persistence/mongo_client.i: src/persistence/mongo_client.cpp.i
 # target to preprocess a source file
 src/persistence/mongo_client.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/persistence/mongo_client.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/persistence/mongo_client.cpp.i
 .PHONY : src/persistence/mongo_client.cpp.i
 
 src/persistence/mongo_client.s: src/persistence/mongo_client.cpp.s
@@ -391,6 +443,7 @@ src/persistence/mongo_client.s: src/persistence/mongo_client.cpp.s
 # target to generate assembly for a file
 src/persistence/mongo_client.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/persistence/mongo_client.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/persistence/mongo_client.cpp.s
 .PHONY : src/persistence/mongo_client.cpp.s
 
 src/persistence/subscription_store.o: src/persistence/subscription_store.cpp.o
@@ -399,6 +452,7 @@ src/persistence/subscription_store.o: src/persistence/subscription_store.cpp.o
 # target to build an object file
 src/persistence/subscription_store.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/persistence/subscription_store.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/persistence/subscription_store.cpp.o
 .PHONY : src/persistence/subscription_store.cpp.o
 
 src/persistence/subscription_store.i: src/persistence/subscription_store.cpp.i
@@ -407,6 +461,7 @@ src/persistence/subscription_store.i: src/persistence/subscription_store.cpp.i
 # target to preprocess a source file
 src/persistence/subscription_store.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/persistence/subscription_store.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/persistence/subscription_store.cpp.i
 .PHONY : src/persistence/subscription_store.cpp.i
 
 src/persistence/subscription_store.s: src/persistence/subscription_store.cpp.s
@@ -415,6 +470,7 @@ src/persistence/subscription_store.s: src/persistence/subscription_store.cpp.s
 # target to generate assembly for a file
 src/persistence/subscription_store.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/persistence/subscription_store.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/persistence/subscription_store.cpp.s
 .PHONY : src/persistence/subscription_store.cpp.s
 
 src/presence/presence_event_router.o: src/presence/presence_event_router.cpp.o
@@ -423,6 +479,7 @@ src/presence/presence_event_router.o: src/presence/presence_event_router.cpp.o
 # target to build an object file
 src/presence/presence_event_router.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_event_router.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_event_router.cpp.o
 .PHONY : src/presence/presence_event_router.cpp.o
 
 src/presence/presence_event_router.i: src/presence/presence_event_router.cpp.i
@@ -431,6 +488,7 @@ src/presence/presence_event_router.i: src/presence/presence_event_router.cpp.i
 # target to preprocess a source file
 src/presence/presence_event_router.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_event_router.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_event_router.cpp.i
 .PHONY : src/presence/presence_event_router.cpp.i
 
 src/presence/presence_event_router.s: src/presence/presence_event_router.cpp.s
@@ -439,6 +497,7 @@ src/presence/presence_event_router.s: src/presence/presence_event_router.cpp.s
 # target to generate assembly for a file
 src/presence/presence_event_router.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_event_router.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_event_router.cpp.s
 .PHONY : src/presence/presence_event_router.cpp.s
 
 src/presence/presence_failover_manager.o: src/presence/presence_failover_manager.cpp.o
@@ -447,6 +506,7 @@ src/presence/presence_failover_manager.o: src/presence/presence_failover_manager
 # target to build an object file
 src/presence/presence_failover_manager.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_failover_manager.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_failover_manager.cpp.o
 .PHONY : src/presence/presence_failover_manager.cpp.o
 
 src/presence/presence_failover_manager.i: src/presence/presence_failover_manager.cpp.i
@@ -455,6 +515,7 @@ src/presence/presence_failover_manager.i: src/presence/presence_failover_manager
 # target to preprocess a source file
 src/presence/presence_failover_manager.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_failover_manager.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_failover_manager.cpp.i
 .PHONY : src/presence/presence_failover_manager.cpp.i
 
 src/presence/presence_failover_manager.s: src/presence/presence_failover_manager.cpp.s
@@ -463,6 +524,7 @@ src/presence/presence_failover_manager.s: src/presence/presence_failover_manager
 # target to generate assembly for a file
 src/presence/presence_failover_manager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_failover_manager.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_failover_manager.cpp.s
 .PHONY : src/presence/presence_failover_manager.cpp.s
 
 src/presence/presence_tcp_client.o: src/presence/presence_tcp_client.cpp.o
@@ -471,6 +533,7 @@ src/presence/presence_tcp_client.o: src/presence/presence_tcp_client.cpp.o
 # target to build an object file
 src/presence/presence_tcp_client.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_tcp_client.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_tcp_client.cpp.o
 .PHONY : src/presence/presence_tcp_client.cpp.o
 
 src/presence/presence_tcp_client.i: src/presence/presence_tcp_client.cpp.i
@@ -479,6 +542,7 @@ src/presence/presence_tcp_client.i: src/presence/presence_tcp_client.cpp.i
 # target to preprocess a source file
 src/presence/presence_tcp_client.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_tcp_client.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_tcp_client.cpp.i
 .PHONY : src/presence/presence_tcp_client.cpp.i
 
 src/presence/presence_tcp_client.s: src/presence/presence_tcp_client.cpp.s
@@ -487,6 +551,7 @@ src/presence/presence_tcp_client.s: src/presence/presence_tcp_client.cpp.s
 # target to generate assembly for a file
 src/presence/presence_tcp_client.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_tcp_client.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_tcp_client.cpp.s
 .PHONY : src/presence/presence_tcp_client.cpp.s
 
 src/presence/presence_xml_parser.o: src/presence/presence_xml_parser.cpp.o
@@ -495,6 +560,7 @@ src/presence/presence_xml_parser.o: src/presence/presence_xml_parser.cpp.o
 # target to build an object file
 src/presence/presence_xml_parser.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_xml_parser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_xml_parser.cpp.o
 .PHONY : src/presence/presence_xml_parser.cpp.o
 
 src/presence/presence_xml_parser.i: src/presence/presence_xml_parser.cpp.i
@@ -503,6 +569,7 @@ src/presence/presence_xml_parser.i: src/presence/presence_xml_parser.cpp.i
 # target to preprocess a source file
 src/presence/presence_xml_parser.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_xml_parser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_xml_parser.cpp.i
 .PHONY : src/presence/presence_xml_parser.cpp.i
 
 src/presence/presence_xml_parser.s: src/presence/presence_xml_parser.cpp.s
@@ -511,6 +578,7 @@ src/presence/presence_xml_parser.s: src/presence/presence_xml_parser.cpp.s
 # target to generate assembly for a file
 src/presence/presence_xml_parser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/presence/presence_xml_parser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/presence/presence_xml_parser.cpp.s
 .PHONY : src/presence/presence_xml_parser.cpp.s
 
 src/sip/sip_callback_handler.o: src/sip/sip_callback_handler.cpp.o
@@ -519,6 +587,7 @@ src/sip/sip_callback_handler.o: src/sip/sip_callback_handler.cpp.o
 # target to build an object file
 src/sip/sip_callback_handler.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_callback_handler.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_callback_handler.cpp.o
 .PHONY : src/sip/sip_callback_handler.cpp.o
 
 src/sip/sip_callback_handler.i: src/sip/sip_callback_handler.cpp.i
@@ -527,6 +596,7 @@ src/sip/sip_callback_handler.i: src/sip/sip_callback_handler.cpp.i
 # target to preprocess a source file
 src/sip/sip_callback_handler.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_callback_handler.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_callback_handler.cpp.i
 .PHONY : src/sip/sip_callback_handler.cpp.i
 
 src/sip/sip_callback_handler.s: src/sip/sip_callback_handler.cpp.s
@@ -535,6 +605,7 @@ src/sip/sip_callback_handler.s: src/sip/sip_callback_handler.cpp.s
 # target to generate assembly for a file
 src/sip/sip_callback_handler.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_callback_handler.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_callback_handler.cpp.s
 .PHONY : src/sip/sip_callback_handler.cpp.s
 
 src/sip/sip_dialog_id.o: src/sip/sip_dialog_id.cpp.o
@@ -543,6 +614,7 @@ src/sip/sip_dialog_id.o: src/sip/sip_dialog_id.cpp.o
 # target to build an object file
 src/sip/sip_dialog_id.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_dialog_id.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_dialog_id.cpp.o
 .PHONY : src/sip/sip_dialog_id.cpp.o
 
 src/sip/sip_dialog_id.i: src/sip/sip_dialog_id.cpp.i
@@ -551,6 +623,7 @@ src/sip/sip_dialog_id.i: src/sip/sip_dialog_id.cpp.i
 # target to preprocess a source file
 src/sip/sip_dialog_id.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_dialog_id.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_dialog_id.cpp.i
 .PHONY : src/sip/sip_dialog_id.cpp.i
 
 src/sip/sip_dialog_id.s: src/sip/sip_dialog_id.cpp.s
@@ -559,6 +632,7 @@ src/sip/sip_dialog_id.s: src/sip/sip_dialog_id.cpp.s
 # target to generate assembly for a file
 src/sip/sip_dialog_id.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_dialog_id.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_dialog_id.cpp.s
 .PHONY : src/sip/sip_dialog_id.cpp.s
 
 src/sip/sip_event.o: src/sip/sip_event.cpp.o
@@ -567,6 +641,7 @@ src/sip/sip_event.o: src/sip/sip_event.cpp.o
 # target to build an object file
 src/sip/sip_event.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_event.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_event.cpp.o
 .PHONY : src/sip/sip_event.cpp.o
 
 src/sip/sip_event.i: src/sip/sip_event.cpp.i
@@ -575,6 +650,7 @@ src/sip/sip_event.i: src/sip/sip_event.cpp.i
 # target to preprocess a source file
 src/sip/sip_event.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_event.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_event.cpp.i
 .PHONY : src/sip/sip_event.cpp.i
 
 src/sip/sip_event.s: src/sip/sip_event.cpp.s
@@ -583,6 +659,7 @@ src/sip/sip_event.s: src/sip/sip_event.cpp.s
 # target to generate assembly for a file
 src/sip/sip_event.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_event.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_event.cpp.s
 .PHONY : src/sip/sip_event.cpp.s
 
 src/sip/sip_stack_manager.o: src/sip/sip_stack_manager.cpp.o
@@ -591,6 +668,7 @@ src/sip/sip_stack_manager.o: src/sip/sip_stack_manager.cpp.o
 # target to build an object file
 src/sip/sip_stack_manager.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_stack_manager.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_stack_manager.cpp.o
 .PHONY : src/sip/sip_stack_manager.cpp.o
 
 src/sip/sip_stack_manager.i: src/sip/sip_stack_manager.cpp.i
@@ -599,6 +677,7 @@ src/sip/sip_stack_manager.i: src/sip/sip_stack_manager.cpp.i
 # target to preprocess a source file
 src/sip/sip_stack_manager.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_stack_manager.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_stack_manager.cpp.i
 .PHONY : src/sip/sip_stack_manager.cpp.i
 
 src/sip/sip_stack_manager.s: src/sip/sip_stack_manager.cpp.s
@@ -607,6 +686,7 @@ src/sip/sip_stack_manager.s: src/sip/sip_stack_manager.cpp.s
 # target to generate assembly for a file
 src/sip/sip_stack_manager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/sip/sip_stack_manager.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/sip/sip_stack_manager.cpp.s
 .PHONY : src/sip/sip_stack_manager.cpp.s
 
 src/subscription/blf_processor.o: src/subscription/blf_processor.cpp.o
@@ -615,6 +695,7 @@ src/subscription/blf_processor.o: src/subscription/blf_processor.cpp.o
 # target to build an object file
 src/subscription/blf_processor.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/blf_processor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/blf_processor.cpp.o
 .PHONY : src/subscription/blf_processor.cpp.o
 
 src/subscription/blf_processor.i: src/subscription/blf_processor.cpp.i
@@ -623,6 +704,7 @@ src/subscription/blf_processor.i: src/subscription/blf_processor.cpp.i
 # target to preprocess a source file
 src/subscription/blf_processor.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/blf_processor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/blf_processor.cpp.i
 .PHONY : src/subscription/blf_processor.cpp.i
 
 src/subscription/blf_processor.s: src/subscription/blf_processor.cpp.s
@@ -631,6 +713,7 @@ src/subscription/blf_processor.s: src/subscription/blf_processor.cpp.s
 # target to generate assembly for a file
 src/subscription/blf_processor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/blf_processor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/blf_processor.cpp.s
 .PHONY : src/subscription/blf_processor.cpp.s
 
 src/subscription/blf_subscription_index.o: src/subscription/blf_subscription_index.cpp.o
@@ -639,6 +722,7 @@ src/subscription/blf_subscription_index.o: src/subscription/blf_subscription_ind
 # target to build an object file
 src/subscription/blf_subscription_index.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/blf_subscription_index.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/blf_subscription_index.cpp.o
 .PHONY : src/subscription/blf_subscription_index.cpp.o
 
 src/subscription/blf_subscription_index.i: src/subscription/blf_subscription_index.cpp.i
@@ -647,6 +731,7 @@ src/subscription/blf_subscription_index.i: src/subscription/blf_subscription_ind
 # target to preprocess a source file
 src/subscription/blf_subscription_index.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/blf_subscription_index.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/blf_subscription_index.cpp.i
 .PHONY : src/subscription/blf_subscription_index.cpp.i
 
 src/subscription/blf_subscription_index.s: src/subscription/blf_subscription_index.cpp.s
@@ -655,6 +740,7 @@ src/subscription/blf_subscription_index.s: src/subscription/blf_subscription_ind
 # target to generate assembly for a file
 src/subscription/blf_subscription_index.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/blf_subscription_index.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/blf_subscription_index.cpp.s
 .PHONY : src/subscription/blf_subscription_index.cpp.s
 
 src/subscription/mwi_processor.o: src/subscription/mwi_processor.cpp.o
@@ -663,6 +749,7 @@ src/subscription/mwi_processor.o: src/subscription/mwi_processor.cpp.o
 # target to build an object file
 src/subscription/mwi_processor.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/mwi_processor.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/mwi_processor.cpp.o
 .PHONY : src/subscription/mwi_processor.cpp.o
 
 src/subscription/mwi_processor.i: src/subscription/mwi_processor.cpp.i
@@ -671,6 +758,7 @@ src/subscription/mwi_processor.i: src/subscription/mwi_processor.cpp.i
 # target to preprocess a source file
 src/subscription/mwi_processor.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/mwi_processor.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/mwi_processor.cpp.i
 .PHONY : src/subscription/mwi_processor.cpp.i
 
 src/subscription/mwi_processor.s: src/subscription/mwi_processor.cpp.s
@@ -679,6 +767,7 @@ src/subscription/mwi_processor.s: src/subscription/mwi_processor.cpp.s
 # target to generate assembly for a file
 src/subscription/mwi_processor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/mwi_processor.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/mwi_processor.cpp.s
 .PHONY : src/subscription/mwi_processor.cpp.s
 
 src/subscription/subscription_state.o: src/subscription/subscription_state.cpp.o
@@ -687,6 +776,7 @@ src/subscription/subscription_state.o: src/subscription/subscription_state.cpp.o
 # target to build an object file
 src/subscription/subscription_state.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/subscription_state.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/subscription_state.cpp.o
 .PHONY : src/subscription/subscription_state.cpp.o
 
 src/subscription/subscription_state.i: src/subscription/subscription_state.cpp.i
@@ -695,6 +785,7 @@ src/subscription/subscription_state.i: src/subscription/subscription_state.cpp.i
 # target to preprocess a source file
 src/subscription/subscription_state.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/subscription_state.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/subscription_state.cpp.i
 .PHONY : src/subscription/subscription_state.cpp.i
 
 src/subscription/subscription_state.s: src/subscription/subscription_state.cpp.s
@@ -703,7 +794,176 @@ src/subscription/subscription_state.s: src/subscription/subscription_state.cpp.s
 # target to generate assembly for a file
 src/subscription/subscription_state.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/src/subscription/subscription_state.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/src/subscription/subscription_state.cpp.s
 .PHONY : src/subscription/subscription_state.cpp.s
+
+tests/test_blf_subscription_index.o: tests/test_blf_subscription_index.cpp.o
+.PHONY : tests/test_blf_subscription_index.o
+
+# target to build an object file
+tests/test_blf_subscription_index.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_blf_subscription_index.cpp.o
+.PHONY : tests/test_blf_subscription_index.cpp.o
+
+tests/test_blf_subscription_index.i: tests/test_blf_subscription_index.cpp.i
+.PHONY : tests/test_blf_subscription_index.i
+
+# target to preprocess a source file
+tests/test_blf_subscription_index.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_blf_subscription_index.cpp.i
+.PHONY : tests/test_blf_subscription_index.cpp.i
+
+tests/test_blf_subscription_index.s: tests/test_blf_subscription_index.cpp.s
+.PHONY : tests/test_blf_subscription_index.s
+
+# target to generate assembly for a file
+tests/test_blf_subscription_index.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_blf_subscription_index.cpp.s
+.PHONY : tests/test_blf_subscription_index.cpp.s
+
+tests/test_config.o: tests/test_config.cpp.o
+.PHONY : tests/test_config.o
+
+# target to build an object file
+tests/test_config.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_config.cpp.o
+.PHONY : tests/test_config.cpp.o
+
+tests/test_config.i: tests/test_config.cpp.i
+.PHONY : tests/test_config.i
+
+# target to preprocess a source file
+tests/test_config.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_config.cpp.i
+.PHONY : tests/test_config.cpp.i
+
+tests/test_config.s: tests/test_config.cpp.s
+.PHONY : tests/test_config.s
+
+# target to generate assembly for a file
+tests/test_config.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_config.cpp.s
+.PHONY : tests/test_config.cpp.s
+
+tests/test_dialog_id_builder.o: tests/test_dialog_id_builder.cpp.o
+.PHONY : tests/test_dialog_id_builder.o
+
+# target to build an object file
+tests/test_dialog_id_builder.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_dialog_id_builder.cpp.o
+.PHONY : tests/test_dialog_id_builder.cpp.o
+
+tests/test_dialog_id_builder.i: tests/test_dialog_id_builder.cpp.i
+.PHONY : tests/test_dialog_id_builder.i
+
+# target to preprocess a source file
+tests/test_dialog_id_builder.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_dialog_id_builder.cpp.i
+.PHONY : tests/test_dialog_id_builder.cpp.i
+
+tests/test_dialog_id_builder.s: tests/test_dialog_id_builder.cpp.s
+.PHONY : tests/test_dialog_id_builder.s
+
+# target to generate assembly for a file
+tests/test_dialog_id_builder.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_dialog_id_builder.cpp.s
+.PHONY : tests/test_dialog_id_builder.cpp.s
+
+tests/test_mwi_parser.o: tests/test_mwi_parser.cpp.o
+.PHONY : tests/test_mwi_parser.o
+
+# target to build an object file
+tests/test_mwi_parser.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_mwi_parser.cpp.o
+.PHONY : tests/test_mwi_parser.cpp.o
+
+tests/test_mwi_parser.i: tests/test_mwi_parser.cpp.i
+.PHONY : tests/test_mwi_parser.i
+
+# target to preprocess a source file
+tests/test_mwi_parser.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_mwi_parser.cpp.i
+.PHONY : tests/test_mwi_parser.cpp.i
+
+tests/test_mwi_parser.s: tests/test_mwi_parser.cpp.s
+.PHONY : tests/test_mwi_parser.s
+
+# target to generate assembly for a file
+tests/test_mwi_parser.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_mwi_parser.cpp.s
+.PHONY : tests/test_mwi_parser.cpp.s
+
+tests/test_presence_failover.o: tests/test_presence_failover.cpp.o
+.PHONY : tests/test_presence_failover.o
+
+# target to build an object file
+tests/test_presence_failover.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_presence_failover.cpp.o
+.PHONY : tests/test_presence_failover.cpp.o
+
+tests/test_presence_failover.i: tests/test_presence_failover.cpp.i
+.PHONY : tests/test_presence_failover.i
+
+# target to preprocess a source file
+tests/test_presence_failover.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_presence_failover.cpp.i
+.PHONY : tests/test_presence_failover.cpp.i
+
+tests/test_presence_failover.s: tests/test_presence_failover.cpp.s
+.PHONY : tests/test_presence_failover.s
+
+# target to generate assembly for a file
+tests/test_presence_failover.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_presence_failover.cpp.s
+.PHONY : tests/test_presence_failover.cpp.s
+
+tests/test_presence_xml_parser.o: tests/test_presence_xml_parser.cpp.o
+.PHONY : tests/test_presence_xml_parser.o
+
+# target to build an object file
+tests/test_presence_xml_parser.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_presence_xml_parser.cpp.o
+.PHONY : tests/test_presence_xml_parser.cpp.o
+
+tests/test_presence_xml_parser.i: tests/test_presence_xml_parser.cpp.i
+.PHONY : tests/test_presence_xml_parser.i
+
+# target to preprocess a source file
+tests/test_presence_xml_parser.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_presence_xml_parser.cpp.i
+.PHONY : tests/test_presence_xml_parser.cpp.i
+
+tests/test_presence_xml_parser.s: tests/test_presence_xml_parser.cpp.s
+.PHONY : tests/test_presence_xml_parser.s
+
+# target to generate assembly for a file
+tests/test_presence_xml_parser.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_presence_xml_parser.cpp.s
+.PHONY : tests/test_presence_xml_parser.cpp.s
+
+tests/test_slow_event_logger.o: tests/test_slow_event_logger.cpp.o
+.PHONY : tests/test_slow_event_logger.o
+
+# target to build an object file
+tests/test_slow_event_logger.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_slow_event_logger.cpp.o
+.PHONY : tests/test_slow_event_logger.cpp.o
+
+tests/test_slow_event_logger.i: tests/test_slow_event_logger.cpp.i
+.PHONY : tests/test_slow_event_logger.i
+
+# target to preprocess a source file
+tests/test_slow_event_logger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_slow_event_logger.cpp.i
+.PHONY : tests/test_slow_event_logger.cpp.i
+
+tests/test_slow_event_logger.s: tests/test_slow_event_logger.cpp.s
+.PHONY : tests/test_slow_event_logger.s
+
+# target to generate assembly for a file
+tests/test_slow_event_logger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/tests/test_slow_event_logger.cpp.s
+.PHONY : tests/test_slow_event_logger.cpp.s
 
 # Help Target
 help:
@@ -713,7 +973,9 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... sip_event_processor"
+	@echo "... sip_processor_tests"
 	@echo "... src/common/config.o"
 	@echo "... src/common/config.i"
 	@echo "... src/common/config.s"
@@ -786,6 +1048,27 @@ help:
 	@echo "... src/subscription/subscription_state.o"
 	@echo "... src/subscription/subscription_state.i"
 	@echo "... src/subscription/subscription_state.s"
+	@echo "... tests/test_blf_subscription_index.o"
+	@echo "... tests/test_blf_subscription_index.i"
+	@echo "... tests/test_blf_subscription_index.s"
+	@echo "... tests/test_config.o"
+	@echo "... tests/test_config.i"
+	@echo "... tests/test_config.s"
+	@echo "... tests/test_dialog_id_builder.o"
+	@echo "... tests/test_dialog_id_builder.i"
+	@echo "... tests/test_dialog_id_builder.s"
+	@echo "... tests/test_mwi_parser.o"
+	@echo "... tests/test_mwi_parser.i"
+	@echo "... tests/test_mwi_parser.s"
+	@echo "... tests/test_presence_failover.o"
+	@echo "... tests/test_presence_failover.i"
+	@echo "... tests/test_presence_failover.s"
+	@echo "... tests/test_presence_xml_parser.o"
+	@echo "... tests/test_presence_xml_parser.i"
+	@echo "... tests/test_presence_xml_parser.s"
+	@echo "... tests/test_slow_event_logger.o"
+	@echo "... tests/test_slow_event_logger.i"
+	@echo "... tests/test_slow_event_logger.s"
 .PHONY : help
 
 

@@ -9,6 +9,8 @@
 #include <sofia-sip/su_alloc.h>
 #include <sofia-sip/nua_tag.h>
 #include <sofia-sip/sip_tag.h>
+#include <cstring>
+#include <cstdio>
 
 namespace sip_processor {
 
@@ -75,6 +77,67 @@ void SipStackManager::run_event_loop() {
         su_root_step(root_, 100);
     }
     LOG_INFO("Sofia event loop thread exiting");
+}
+
+void SipStackManager::respond_to_subscribe(nua_handle_t* nh, int status,
+                                            const char* phrase, uint32_t expires) {
+    if (!nh) {
+        LOG_WARN("respond_to_subscribe: null handle");
+        return;
+    }
+    if (!running_.load(std::memory_order_acquire)) {
+        LOG_WARN("respond_to_subscribe: stack not running");
+        return;
+    }
+
+    int substate;
+    if (status >= 200 && status < 300)
+        substate = nua_substate_active;
+    else
+        substate = nua_substate_terminated;
+
+    char expires_str[32];
+    snprintf(expires_str, sizeof(expires_str), "%u", expires);
+
+    LOG_DEBUG("SIP: responding %d %s to SUBSCRIBE (expires=%u)", status, phrase, expires);
+
+    nua_respond(nh, status, phrase,
+                NUTAG_SUBSTATE(substate),
+                SIPTAG_EXPIRES_STR(expires_str),
+                TAG_END());
+}
+
+void SipStackManager::send_notify(nua_handle_t* nh, const char* event_type,
+                                   const char* content_type, const char* body,
+                                   const char* subscription_state_str) {
+    if (!nh) {
+        LOG_WARN("send_notify: null handle");
+        return;
+    }
+    if (!running_.load(std::memory_order_acquire)) {
+        LOG_WARN("send_notify: stack not running");
+        return;
+    }
+
+    int substate = nua_substate_active;
+    if (subscription_state_str) {
+        if (strcmp(subscription_state_str, "terminated") == 0)
+            substate = nua_substate_terminated;
+        else if (strcmp(subscription_state_str, "pending") == 0)
+            substate = nua_substate_pending;
+    }
+
+    LOG_DEBUG("SIP: sending NOTIFY event=%s state=%s body_len=%zu",
+              event_type ? event_type : "(null)",
+              subscription_state_str ? subscription_state_str : "active",
+              body ? strlen(body) : 0);
+
+    nua_notify(nh,
+               NUTAG_SUBSTATE(substate),
+               SIPTAG_EVENT_STR(event_type),
+               SIPTAG_CONTENT_TYPE_STR(content_type),
+               SIPTAG_PAYLOAD_STR(body),
+               TAG_END());
 }
 
 } // namespace sip_processor

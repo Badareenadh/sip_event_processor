@@ -1,0 +1,173 @@
+Start testing: Feb 15 04:05 PST
+----------------------------------------------------------
+1/1 Testing: unit_tests
+1/1 Test: unit_tests
+Command: "/home/wsadmin/src/badareenadh-ccp/sip_event_processor/build/sip_processor_tests"
+Directory: /home/wsadmin/src/badareenadh-ccp/sip_event_processor/build
+"unit_tests" start time: Feb 15 04:05 PST
+Output:
+----------------------------------------------------------
+Running main() from gtest_main.cc
+[==========] Running 42 tests from 8 test cases.
+[----------] Global test environment set-up.
+[----------] 3 tests from Config
+[ RUN      ] Config.LoadDefaults
+2026-02-15 04:05:46.601 [INFO] [tid:140566099880704] [config.cpp:123] Config: defaults loaded, 4 workers
+[       OK ] Config.LoadDefaults (0 ms)
+[ RUN      ] Config.LoadFromFile
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [config.cpp:217] Config: loaded from '/tmp/test_sip_proc.conf' — 4 workers, 2 presence servers, mongo=disabled http=0.0.0.0:8080
+[       OK ] Config.LoadFromFile (1 ms)
+[ RUN      ] Config.ParseServersCsv
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [config.cpp:217] Config: loaded from '/tmp/test_servers.conf' — 4 workers, 4 presence servers, mongo=enabled http=0.0.0.0:8080
+[       OK ] Config.ParseServersCsv (0 ms)
+[----------] 3 tests from Config (1 ms total)
+
+[----------] 5 tests from DialogIdBuilder
+[ RUN      ] DialogIdBuilder.IsValidRejectsEmpty
+[       OK ] DialogIdBuilder.IsValidRejectsEmpty (0 ms)
+[ RUN      ] DialogIdBuilder.IsValidAcceptsNormal
+[       OK ] DialogIdBuilder.IsValidAcceptsNormal (0 ms)
+[ RUN      ] DialogIdBuilder.IsValidRejectsTooLong
+[       OK ] DialogIdBuilder.IsValidRejectsTooLong (0 ms)
+[ RUN      ] DialogIdBuilder.BuildFromNullSipReturnsEmpty
+2026-02-15 04:05:46.602 [ERROR] [tid:140566099880704] [sip_dialog_id.cpp:13] DialogIdBuilder::build called with null sip
+[       OK ] DialogIdBuilder.BuildFromNullSipReturnsEmpty (0 ms)
+[ RUN      ] DialogIdBuilder.BuildFromNullHandleReturnsEmpty
+[       OK ] DialogIdBuilder.BuildFromNullHandleReturnsEmpty (0 ms)
+[----------] 5 tests from DialogIdBuilder (0 ms total)
+
+[----------] 12 tests from BlfIndexTest
+[ RUN      ] BlfIndexTest.NormalizeStripsBrackets
+[       OK ] BlfIndexTest.NormalizeStripsBrackets (0 ms)
+[ RUN      ] BlfIndexTest.NormalizeStripsParams
+[       OK ] BlfIndexTest.NormalizeStripsParams (0 ms)
+[ RUN      ] BlfIndexTest.NormalizeStripsDefaultPort
+[       OK ] BlfIndexTest.NormalizeStripsDefaultPort (0 ms)
+[ RUN      ] BlfIndexTest.NormalizeLowercasesHost
+[       OK ] BlfIndexTest.NormalizeLowercasesHost (0 ms)
+[ RUN      ] BlfIndexTest.NormalizeAddsScheme
+[       OK ] BlfIndexTest.NormalizeAddsScheme (0 ms)
+[ RUN      ] BlfIndexTest.AddAndLookup
+[       OK ] BlfIndexTest.AddAndLookup (0 ms)
+[ RUN      ] BlfIndexTest.LookupNormalizes
+[       OK ] BlfIndexTest.LookupNormalizes (0 ms)
+[ RUN      ] BlfIndexTest.MultipleWatchersSameUri
+[       OK ] BlfIndexTest.MultipleWatchersSameUri (0 ms)
+[ RUN      ] BlfIndexTest.LookupByTenant
+[       OK ] BlfIndexTest.LookupByTenant (0 ms)
+[ RUN      ] BlfIndexTest.RemoveDialog
+[       OK ] BlfIndexTest.RemoveDialog (0 ms)
+[ RUN      ] BlfIndexTest.LookupEmptyReturnsEmpty
+[       OK ] BlfIndexTest.LookupEmptyReturnsEmpty (0 ms)
+[ RUN      ] BlfIndexTest.DuplicateAddIsIdempotent
+[       OK ] BlfIndexTest.DuplicateAddIsIdempotent (0 ms)
+[----------] 12 tests from BlfIndexTest (0 ms total)
+
+[----------] 7 tests from PresenceXmlParser
+[ RUN      ] PresenceXmlParser.ParseSingleEvent
+[       OK ] PresenceXmlParser.ParseSingleEvent (0 ms)
+[ RUN      ] PresenceXmlParser.ParseMultipleEvents
+[       OK ] PresenceXmlParser.ParseMultipleEvents (0 ms)
+[ RUN      ] PresenceXmlParser.ParseIncompleteBuffers
+[       OK ] PresenceXmlParser.ParseIncompleteBuffers (0 ms)
+[ RUN      ] PresenceXmlParser.ParseHeartbeat
+[       OK ] PresenceXmlParser.ParseHeartbeat (0 ms)
+[ RUN      ] PresenceXmlParser.RejectInvalidEvent
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_xml_parser.cpp:61] PresenceParser: invalid event (call=)
+[       OK ] PresenceXmlParser.RejectInvalidEvent (0 ms)
+[ RUN      ] PresenceXmlParser.ParseCallStates
+[       OK ] PresenceXmlParser.ParseCallStates (0 ms)
+[ RUN      ] PresenceXmlParser.ResetClearsBuffer
+[       OK ] PresenceXmlParser.ResetClearsBuffer (0 ms)
+[----------] 7 tests from PresenceXmlParser (0 ms total)
+
+[----------] 7 tests from FailoverTest
+[ RUN      ] FailoverTest.RoundRobinCycles
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:20] FailoverManager: initialized with 3 servers
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server2.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server3.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=0)
+[       OK ] FailoverTest.RoundRobinCycles (0 ms)
+[ RUN      ] FailoverTest.RoundRobinSkipsCooldown
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:20] FailoverManager: initialized with 3 servers
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #1 (reason=test, cooldown=10s)
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server2.com:9000 (failures=0)
+[       OK ] FailoverTest.RoundRobinSkipsCooldown (0 ms)
+[ RUN      ] FailoverTest.PriorityPicksLowest
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:20] FailoverManager: initialized with 3 servers
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=0)
+[       OK ] FailoverTest.PriorityPicksLowest (0 ms)
+[ RUN      ] FailoverTest.PriorityFallsBack
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:20] FailoverManager: initialized with 3 servers
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #1 (reason=, cooldown=10s)
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server2.com:9000 (failures=0)
+[       OK ] FailoverTest.PriorityFallsBack (0 ms)
+[ RUN      ] FailoverTest.SuccessResetsCooldown
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:20] FailoverManager: initialized with 3 servers
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #1 (reason=, cooldown=10s)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #2 (reason=, cooldown=20s)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #3 (reason=, cooldown=30s)
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:133] FailoverManager: server1.com:9000 reported healthy (total_ok=1)
+[       OK ] FailoverTest.SuccessResetsCooldown (0 ms)
+[ RUN      ] FailoverTest.AllInCooldownPicksSoonestExpiry
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:20] FailoverManager: initialized with 3 servers
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #1 (reason=, cooldown=10s)
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server2.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server2.com:9000 failure #1 (reason=, cooldown=10s)
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server3.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server3.com:9000 failure #1 (reason=, cooldown=10s)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:59] FailoverManager: all servers in cooldown, forcing server1.com:9000
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=1)
+[       OK ] FailoverTest.AllInCooldownPicksSoonestExpiry (0 ms)
+[ RUN      ] FailoverTest.HealthyCount
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:20] FailoverManager: initialized with 3 servers
+2026-02-15 04:05:46.602 [INFO] [tid:140566099880704] [presence_failover_manager.cpp:68] FailoverManager: selected server server1.com:9000 (failures=0)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #1 (reason=, cooldown=10s)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #2 (reason=, cooldown=20s)
+2026-02-15 04:05:46.602 [WARN] [tid:140566099880704] [presence_failover_manager.cpp:156] FailoverManager: server1.com:9000 failure #3 (reason=, cooldown=30s)
+[       OK ] FailoverTest.HealthyCount (0 ms)
+[----------] 7 tests from FailoverTest (0 ms total)
+
+[----------] 3 tests from SlowEventLogger
+[ RUN      ] SlowEventLogger.NoLogBelowThreshold
+[       OK ] SlowEventLogger.NoLogBelowThreshold (0 ms)
+[ RUN      ] SlowEventLogger.LogsAboveWarnThreshold
+2026-02-15 04:05:46.608 [WARN] [tid:140566099880704] [slow_event_logger.cpp:58] SLOW_EVENT: TEST took 5ms dialog=dialog-1 
+[       OK ] SlowEventLogger.LogsAboveWarnThreshold (6 ms)
+[ RUN      ] SlowEventLogger.UpdateThresholdsAtRuntime
+[       OK ] SlowEventLogger.UpdateThresholdsAtRuntime (0 ms)
+[----------] 3 tests from SlowEventLogger (6 ms total)
+
+[----------] 4 tests from RegistryTest
+[ RUN      ] RegistryTest.RegisterAndLookup
+[       OK ] RegistryTest.RegisterAndLookup (0 ms)
+[ RUN      ] RegistryTest.UnregisterRemoves
+[       OK ] RegistryTest.UnregisterRemoves (0 ms)
+[ RUN      ] RegistryTest.CountByTenant
+[       OK ] RegistryTest.CountByTenant (0 ms)
+[ RUN      ] RegistryTest.CountByType
+[       OK ] RegistryTest.CountByType (0 ms)
+[----------] 4 tests from RegistryTest (0 ms total)
+
+[----------] 1 test from MwiParser
+[ RUN      ] MwiParser.ParsesVoiceMessage
+[       OK ] MwiParser.ParsesVoiceMessage (0 ms)
+[----------] 1 test from MwiParser (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 42 tests from 8 test cases ran. (7 ms total)
+[  PASSED  ] 42 tests.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"unit_tests" end time: Feb 15 04:05 PST
+"unit_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Feb 15 04:05 PST

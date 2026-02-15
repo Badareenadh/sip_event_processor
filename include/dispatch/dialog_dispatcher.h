@@ -14,12 +14,14 @@
 namespace sip_processor {
 class SlowEventLogger;
 class SubscriptionStore;
+class SipStackManager;
 
 class DialogDispatcher {
 public:
     DialogDispatcher(const Config& config,
                      std::shared_ptr<SlowEventLogger> slow_logger,
-                     std::shared_ptr<SubscriptionStore> sub_store);
+                     std::shared_ptr<SubscriptionStore> sub_store,
+                     SipStackManager* stack_mgr = nullptr);
     ~DialogDispatcher();
     Result start();
     void stop();

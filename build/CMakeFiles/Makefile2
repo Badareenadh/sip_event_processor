@@ -64,6 +64,7 @@ CMAKE_BINARY_DIR = /home/wsadmin/src/badareenadh-ccp/sip_event_processor/build
 
 # The main recursive "all" target.
 all: CMakeFiles/sip_event_processor.dir/all
+all: CMakeFiles/sip_processor_tests.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -72,6 +73,7 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/sip_event_processor.dir/clean
+clean: CMakeFiles/sip_processor_tests.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -99,6 +101,32 @@ sip_event_processor: CMakeFiles/sip_event_processor.dir/rule
 CMakeFiles/sip_event_processor.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_event_processor.dir/build.make CMakeFiles/sip_event_processor.dir/clean
 .PHONY : CMakeFiles/sip_event_processor.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/sip_processor_tests.dir
+
+# All Build rule for target.
+CMakeFiles/sip_processor_tests.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wsadmin/src/badareenadh-ccp/sip_event_processor/build/CMakeFiles --progress-num=26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56 "Built target sip_processor_tests"
+.PHONY : CMakeFiles/sip_processor_tests.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/sip_processor_tests.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wsadmin/src/badareenadh-ccp/sip_event_processor/build/CMakeFiles 31
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/sip_processor_tests.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wsadmin/src/badareenadh-ccp/sip_event_processor/build/CMakeFiles 0
+.PHONY : CMakeFiles/sip_processor_tests.dir/rule
+
+# Convenience name for target.
+sip_processor_tests: CMakeFiles/sip_processor_tests.dir/rule
+.PHONY : sip_processor_tests
+
+# clean rule for target.
+CMakeFiles/sip_processor_tests.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sip_processor_tests.dir/build.make CMakeFiles/sip_processor_tests.dir/clean
+.PHONY : CMakeFiles/sip_processor_tests.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

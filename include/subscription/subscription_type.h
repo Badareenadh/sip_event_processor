@@ -34,5 +34,14 @@ inline SubscriptionType subscription_type_from_string(const std::string& s) {
     return SubscriptionType::kUnknown;
 }
 
+// Returns the SIP Event header value for a subscription type
+inline const char* subscription_type_to_event_header(SubscriptionType t) {
+    switch (t) {
+        case SubscriptionType::kBLF: return "dialog";
+        case SubscriptionType::kMWI: return "message-summary";
+        default:                     return nullptr;
+    }
+}
+
 } // namespace sip_processor
 #endif

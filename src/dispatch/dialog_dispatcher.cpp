@@ -11,12 +11,13 @@ namespace sip_processor {
 
 DialogDispatcher::DialogDispatcher(const Config& config,
                                      std::shared_ptr<SlowEventLogger> slow_logger,
-                                     std::shared_ptr<SubscriptionStore> sub_store)
+                                     std::shared_ptr<SubscriptionStore> sub_store,
+                                     SipStackManager* stack_mgr)
     : config_(config) {
     size_t n = config_.num_workers > 0 ? config_.num_workers : 8;
     workers_.reserve(n);
     for (size_t i = 0; i < n; ++i)
-        workers_.push_back(std::make_unique<DialogWorker>(i, config_, slow_logger, sub_store));
+        workers_.push_back(std::make_unique<DialogWorker>(i, config_, slow_logger, sub_store, stack_mgr));
 }
 
 DialogDispatcher::~DialogDispatcher() { stop(); }

@@ -68,11 +68,14 @@ int main(int argc, char* argv[]) {
         sub_store = std::make_shared<SubscriptionStore>(config, nullptr);
     }
 
-    // 4. Dispatcher
-    DialogDispatcher dispatcher(config, slow_logger, sub_store);
+    // 4. SIP stack (create before dispatcher so workers can reference it)
+    SipStackManager stack(config);
+
+    // 5. Dispatcher (pass stack pointer so workers can send responses/NOTIFYs)
+    DialogDispatcher dispatcher(config, slow_logger, sub_store, &stack);
     SipCallbackHandler::set_dispatcher(&dispatcher);
 
-    // 5. Recovery: load subscriptions from MongoDB BEFORE starting dispatcher
+    // 6. Recovery: load subscriptions from MongoDB BEFORE starting dispatcher
     if (sub_store && sub_store->is_enabled()) {
         std::vector<SubscriptionStore::StoredSubscription> recovered;
         if (sub_store->load_active_subscriptions(recovered) == Result::kOk) {
@@ -87,11 +90,10 @@ int main(int argc, char* argv[]) {
 
     if (dispatcher.start() != Result::kOk) { LOG_FATAL("Dispatcher start failed"); return 1; }
 
-    // 6. SIP stack
-    SipStackManager stack(config);
+    // 7. Start SIP stack (after dispatcher so callbacks have a target)
     if (stack.start() != Result::kOk) { LOG_FATAL("SIP stack failed"); return 1; }
 
-    // 7. Presence failover + router + TCP client
+    // 8. Presence failover + router + TCP client
     auto failover_mgr = std::make_shared<PresenceFailoverManager>(config);
 
     PresenceEventRouter presence_router(config, dispatcher, slow_logger);
@@ -108,11 +110,11 @@ int main(int argc, char* argv[]) {
     });
     presence_client.start();  // Non-fatal if it fails
 
-    // 8. Reaper
+    // 9. Reaper
     StaleSubscriptionReaper reaper(config, dispatcher, &stack, sub_store);
     reaper.start();
 
-    // 9. HTTP server
+    // 10. HTTP server
     HttpServer http(config);
     if (config.http_enabled) {
         HealthHandler::Dependencies hdeps{&dispatcher, &stack, &presence_client,

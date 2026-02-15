@@ -17,12 +17,19 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake/Modules/CMakeLanguageInformation.cmake"
   "/usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake"
   "/usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake"
+  "/usr/share/cmake/Modules/CheckCXXSourceCompiles.cmake"
+  "/usr/share/cmake/Modules/CheckIncludeFileCXX.cmake"
+  "/usr/share/cmake/Modules/CheckLibraryExists.cmake"
   "/usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "/usr/share/cmake/Modules/Compiler/GNU-CXX.cmake"
   "/usr/share/cmake/Modules/Compiler/GNU.cmake"
+  "/usr/share/cmake/Modules/FindGTest.cmake"
   "/usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake"
   "/usr/share/cmake/Modules/FindPackageMessage.cmake"
   "/usr/share/cmake/Modules/FindPkgConfig.cmake"
+  "/usr/share/cmake/Modules/FindThreads.cmake"
+  "/usr/share/cmake/Modules/GoogleTest.cmake"
+  "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake"
   "/usr/share/cmake/Modules/Platform/Linux-GNU-CXX.cmake"
   "/usr/share/cmake/Modules/Platform/Linux-GNU.cmake"
   "/usr/share/cmake/Modules/Platform/Linux.cmake"
@@ -43,4 +50,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/sip_event_processor.dir/DependInfo.cmake"
+  "CMakeFiles/sip_processor_tests.dir/DependInfo.cmake"
   )
