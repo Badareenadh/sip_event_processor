@@ -1,0 +1,88 @@
+
+
+// =============================================================================
+// FILE: tests/perf/sipp_blf_scenario.xml
+//
+// SIPp scenario for BLF subscription load testing.
+// Generates BLF SUBSCRIBE → receives 200 OK → receives NOTIFY.
+//
+// Run: sipp -sf sipp_blf_scenario.xml -s 200 target:5060 \
+//          -r 100 -rp 1000 -m 10000 -l 1000
+// =============================================================================
+/*
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+<scenario name="BLF Subscription">
+
+  <!-- Send SUBSCRIBE for dialog event -->
+  <send retrans="500">
+    <![CDATA[
+      SUBSCRIBE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:[field0]@[local_ip]>;tag=[call_number]
+      To: <sip:[service]@[remote_ip]>
+      Call-ID: [call_id]
+      CSeq: 1 SUBSCRIBE
+      Contact: <sip:[field0]@[local_ip]:[local_port]>
+      Max-Forwards: 70
+      Event: dialog
+      Accept: application/dialog-info+xml
+      Expires: 3600
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- Receive 200 OK -->
+  <recv response="200" rtd="true">
+  </recv>
+
+  <!-- Receive initial NOTIFY -->
+  <recv request="NOTIFY" crlf="true">
+  </recv>
+
+  <!-- Send 200 OK for NOTIFY -->
+  <send>
+    <![CDATA[
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- Wait and then unsubscribe -->
+  <pause milliseconds="5000"/>
+
+  <!-- Send unSUBSCRIBE -->
+  <send retrans="500">
+    <![CDATA[
+      SUBSCRIBE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:[field0]@[local_ip]>;tag=[call_number]
+      To: <sip:[service]@[remote_ip]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 2 SUBSCRIBE
+      Contact: <sip:[field0]@[local_ip]:[local_port]>
+      Max-Forwards: 70
+      Event: dialog
+      Expires: 0
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <recv response="200">
+  </recv>
+
+  <!-- Response time legend -->
+  <ResponseTimeRepartition value="10, 20, 30, 40, 50, 100, 150, 200"/>
+  <CallLengthRepartition value="10, 50, 100, 500, 1000, 5000"/>
+
+</scenario>
+-->
+*/
